@@ -1,0 +1,42 @@
+appId: com.sticky.app
+productName: Sticky
+
+# 빌드 디렉토리
+directories:
+  output: dist
+  buildResources: public
+
+# 패키징할 파일
+files:
+  - electron/**
+  - .next/standalone/**
+  - .next/static/**
+  - public/**
+  - package.json
+
+# Windows 설정
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: public/icon.ico
+  # 개발 빌드: exe 리소스 편집 및 코드 서명 건너뛰기
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+  forceCodeSigning: false
+
+# NSIS 설치 프로그램 설정 (단순 설치, UAC 없이)
+nsis:
+  oneClick: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  installerIcon: public/icon.ico
+  uninstallerIcon: public/icon.ico
+
+# extra 리소스: .next/static은 standalone에서 별도 복사 필요
+extraResources:
+  - from: .next/static
+    to: .next/static
+  - from: public
+    to: public

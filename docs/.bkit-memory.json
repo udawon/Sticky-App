@@ -1,0 +1,12 @@
+{
+  "sessionCount": 35,
+  "lastSession": {
+    "startedAt": "2026-02-28T11:22:32.100Z",
+    "platform": "claude",
+    "level": "Dynamic"
+  },
+  "currentFeature": "notion-export",
+  "phase": "completed",
+  "matchRate": 100,
+  "updatedAt": "2026-02-28T00:00:00.000Z"
+}

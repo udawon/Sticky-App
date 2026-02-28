@@ -1,0 +1,1178 @@
+{
+  "timestamp": "2026-02-28T06:33:45.620Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-28T06:29:26.726Z",
+    "activeFeatures": [
+      "notification",
+      ".claude",
+      "providers",
+      "tasks",
+      "panels",
+      "signup",
+      "layout",
+      "login",
+      "stores",
+      "validations",
+      "claude-sticky",
+      "notion",
+      "databases",
+      "import",
+      "과제-보드-고도화-및-notion-연동 Gap 분석",
+      "logout",
+      "electron",
+      "(main)",
+      "open"
+    ],
+    "primaryFeature": "notification",
+    "features": {
+      "notification": {
+        "phase": "report",
+        "phaseNumber": 6,
+        "matchRate": 95.8,
+        "iterationCount": 0,
+        "requirements": [
+          "FR-01: notifications.type 컬럼 추가",
+          "FR-02: 트리거 A (과제 생성 → 담당자 알람)",
+          "FR-03: 트리거 B (담당자 추가 → 알람)",
+          "FR-04: 트리거 C (메모 생성 → 담당자 알람)",
+          "FR-05~06: NotificationType + type 필드",
+          "FR-07~10: NotificationProvider (초기로드/Realtime/IPC)",
+          "FR-11: MainLayout NotificationProvider 래핑",
+          "FR-12~14: TitleBar Bell 빨간 dot",
+          "FR-15: preload.js setBadge IPC 노출",
+          "FR-16~18: main.js set-badge 핸들러",
+          "FR-19: icon-badge.ico 뱃지 아이콘"
+        ],
+        "documents": {
+          "plan": "docs/01-plan/features/notification.plan.md",
+          "design": "docs/02-design/features/notification.design.md",
+          "analysis": "docs/03-analysis/notification.analysis.md",
+          "report": "docs/04-report/features/notification.report.md"
+        },
+        "timestamps": {
+          "started": "2026-02-28T00:00:00.000Z",
+          "lastUpdated": "2026-02-28T05:30:00.000Z"
+        }
+      },
+      "task-ui-redesign": {
+        "phase": "archived",
+        "phaseNumber": 7,
+        "matchRate": 100,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {
+          "plan": "docs/archive/2026-02/task-ui-redesign/task-ui-redesign.plan.md",
+          "analysis": "docs/archive/2026-02/task-ui-redesign/task-ui-redesign.analysis.md",
+          "report": "docs/archive/2026-02/task-ui-redesign/task-ui-redesign.report.md"
+        },
+        "timestamps": {
+          "started": "2026-02-27T05:00:00.000Z",
+          "lastUpdated": "2026-02-28T00:00:00.000Z",
+          "archivedAt": "2026-02-28T00:00:00.000Z"
+        },
+        "archivedTo": "docs/archive/2026-02/task-ui-redesign/"
+      },
+      ".claude": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T22:33:59.553Z",
+          "lastUpdated": "2026-02-26T22:47:16.200Z"
+        },
+        "lastFile": "C:/Users/udawon/.claude/statusline-command.sh"
+      },
+      "providers": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T23:13:39.493Z",
+          "lastUpdated": "2026-02-28T06:29:26.726Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\providers\\notification-provider.tsx"
+      },
+      "tasks": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T23:14:33.273Z",
+          "lastUpdated": "2026-02-27T14:46:15.541Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\tasks\\task-detail-panel.tsx"
+      },
+      "panels": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T23:15:44.177Z",
+          "lastUpdated": "2026-02-27T14:46:03.811Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\panels\\compact-tasks-panel.tsx"
+      },
+      "signup": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T23:15:53.798Z",
+          "lastUpdated": "2026-02-27T00:38:00.912Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\(auth)\\signup\\page.tsx"
+      },
+      "layout": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-26T23:29:35.899Z",
+          "lastUpdated": "2026-02-28T06:16:33.257Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\layout\\title-bar.tsx"
+      },
+      "login": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:37:35.167Z",
+          "lastUpdated": "2026-02-27T03:44:12.616Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\(auth)\\login\\page.tsx"
+      },
+      "stores": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:51:19.633Z",
+          "lastUpdated": "2026-02-27T00:51:19.633Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\stores\\task-store.ts"
+      },
+      "validations": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:51:32.426Z",
+          "lastUpdated": "2026-02-27T00:59:40.010Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\lib\\validations\\task-schema.ts"
+      },
+      "claude-sticky": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:54:11.194Z",
+          "lastUpdated": "2026-02-28T04:47:18.077Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\types\\database.ts"
+      },
+      "notion": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:54:20.296Z",
+          "lastUpdated": "2026-02-27T00:58:32.633Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\lib\\notion\\mapper.ts"
+      },
+      "databases": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:54:42.465Z",
+          "lastUpdated": "2026-02-27T00:58:00.304Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\api\\notion\\databases\\route.ts"
+      },
+      "import": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T00:54:59.212Z",
+          "lastUpdated": "2026-02-27T00:58:18.347Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\api\\notion\\import\\route.ts"
+      },
+      "과제-보드-고도화-및-notion-연동 Gap 분석": {
+        "phase": "act",
+        "phaseNumber": 5,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T02:55:34.908Z",
+          "lastUpdated": "2026-02-27T02:55:34.909Z"
+        },
+        "previousPhase": "check",
+        "autoAdvanced": true
+      },
+      "logout": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T03:41:06.942Z",
+          "lastUpdated": "2026-02-27T03:41:06.942Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\api\\auth\\logout\\route.ts"
+      },
+      "electron": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-27T06:17:20.730Z",
+          "lastUpdated": "2026-02-28T04:48:21.690Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\electron\\main.js"
+      },
+      "(main)": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-28T04:47:33.274Z",
+          "lastUpdated": "2026-02-28T04:47:36.841Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\(main)\\layout.tsx"
+      },
+      "open": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-28T06:05:02.779Z",
+          "lastUpdated": "2026-02-28T06:05:28.374Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\open\\page.tsx"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 1,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-02-26T14:29:38.206Z",
+      "onboardingCompleted": false,
+      "lastActivity": "2026-02-28T06:29:26.726Z"
+    },
+    "history": [
+      {
+        "timestamp": "2026-02-26T22:33:59.553Z",
+        "feature": ".claude",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T22:47:16.200Z",
+        "feature": ".claude",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:13:39.493Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:14:33.273Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:18.490Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:26.988Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:40.125Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:44.177Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:48.167Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:53.798Z",
+        "feature": "signup",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:15:58.584Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:16:04.034Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:17:56.848Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:19:59.666Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:29:35.899Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:39:31.119Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:39:35.790Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-26T23:39:44.630Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:00:51.976Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:36:35.408Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:36:41.503Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:36:46.317Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:36:50.746Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:36:56.636Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:14.524Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:19.355Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:35.167Z",
+        "feature": "login",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:39.945Z",
+        "feature": "login",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:47.825Z",
+        "feature": "signup",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:52.149Z",
+        "feature": "signup",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:37:56.271Z",
+        "feature": "signup",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:38:00.912Z",
+        "feature": "signup",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:51:19.633Z",
+        "feature": "stores",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:51:32.426Z",
+        "feature": "validations",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:51:59.580Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:52:17.277Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:52:44.170Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:53:24.297Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:54:11.194Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:54:20.296Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:54:32.890Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:54:42.465Z",
+        "feature": "databases",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:54:59.212Z",
+        "feature": "import",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:55:07.222Z",
+        "feature": "databases",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:55:08.409Z",
+        "feature": "import",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:55:44.758Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:55:50.940Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:55:56.843Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:56:04.368Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:56:30.230Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:57:43.036Z",
+        "feature": "validations",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:57:48.667Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:58:00.304Z",
+        "feature": "databases",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:58:18.347Z",
+        "feature": "import",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:58:32.633Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:59:40.010Z",
+        "feature": "validations",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T00:59:45.403Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T02:55:34.909Z",
+        "feature": "과제-보드-고도화-및-notion-연동 Gap 분석",
+        "phase": "act",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:23:45.640Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:23:52.218Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:23:55.570Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:28:32.061Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:29:40.935Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:31:53.412Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:32:01.488Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:41:06.942Z",
+        "feature": "logout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:41:17.063Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:44:01.879Z",
+        "feature": "login",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:44:06.529Z",
+        "feature": "login",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:44:12.616Z",
+        "feature": "login",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:55:16.423Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:58:26.922Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T03:59:40.784Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T04:00:19.177Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T04:01:47.718Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T05:30:53.786Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T05:31:14.832Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T05:31:43.146Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T05:31:55.369Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:16:45.651Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:17:20.730Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:36:16.393Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:36:41.156Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:36:55.497Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T06:37:15.000Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T09:01:07.817Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T09:01:15.934Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T12:46:02.391Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T12:46:05.416Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T12:46:09.632Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T12:46:19.168Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:09.129Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:31.201Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:42.680Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:46.291Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:52.882Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:03:59.500Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:04:04.240Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:04:07.894Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:13:47.403Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:15:10.221Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:23:02.269Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:39:55.169Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:40:00.376Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T13:55:59.734Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:05:41.466Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:08:36.023Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:08:41.736Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:09:00.389Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:12:13.139Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:14:39.094Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:28:24.737Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:30:07.759Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:30:28.632Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:32:39.304Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:45:52.820Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:46:03.811Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:46:10.196Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-27T14:46:15.541Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:18.077Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:29.006Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:33.274Z",
+        "feature": "(main)",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:36.841Z",
+        "feature": "(main)",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:40.807Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:44.498Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:48.604Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:47:54.131Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:48:01.515Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:48:07.205Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:48:14.166Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T04:48:21.690Z",
+        "feature": "electron",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T05:47:01.406Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T05:48:29.140Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T05:58:33.805Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:04:19.154Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:05:02.779Z",
+        "feature": "open",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:05:28.374Z",
+        "feature": "open",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:16:28.982Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:16:33.257Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:24:49.396Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:26:35.120Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T06:29:26.726Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}
