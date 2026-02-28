@@ -43,7 +43,7 @@ export function TaskFilterBar() {
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           placeholder="과제 검색..."
-          className="h-7 pl-7 pr-6 text-xs bg-muted/50 border-transparent focus:border-border focus:bg-background rounded-lg transition-colors"
+          className="h-8 py-0 pl-7 pr-6 text-xs bg-card border-border/50 shadow-sm focus:border-border focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg transition-colors"
           autoComplete="off"
         />
         {localSearch && (
@@ -59,7 +59,7 @@ export function TaskFilterBar() {
 
       {/* 정렬 */}
       <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
-        <SelectTrigger className="h-7 w-[76px] text-[11px] px-2 bg-muted/50 border-transparent hover:border-border rounded-lg transition-colors">
+        <SelectTrigger size="sm" className="w-[76px] text-[11px] px-2 bg-card border-border/50 shadow-sm hover:border-border rounded-lg transition-colors">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

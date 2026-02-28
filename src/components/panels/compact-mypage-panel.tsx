@@ -4,10 +4,25 @@ import { useEffect, useState } from "react"
 import { useAuthStore } from "@/stores/auth-store"
 import { createClient } from "@/lib/supabase/client"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog"
 import { Star, TrendingUp, Target, Award, Calendar } from "lucide-react"
-import type { PointLog, Task } from "@/types/database"
+import { toast } from "sonner"
+import { MiniAvatar, PartIcon } from "@/components/avatar/mini-avatar"
+import type { PointLog, Task, ShopItem, Profile } from "@/types/database"
+
+type AvatarSlotKey = "hair" | "face" | "top" | "bottom" | "shoes"
+const AVATAR_SLOTS: { key: AvatarSlotKey; label: string }[] = [
+  { key: "hair",   label: "머리" },
+  { key: "face",   label: "얼굴" },
+  { key: "top",    label: "상의" },
+  { key: "bottom", label: "하의" },
+  { key: "shoes",  label: "신발" },
+]
 
 function getLevel(totalPoints: number) {
   const levels = [
@@ -18,7 +33,7 @@ function getLevel(totalPoints: number) {
     { level: 5, name: "산", min: 1000, max: 2000 },
     { level: 6, name: "전설", min: 2000, max: Infinity },
   ]
-  const current = levels.find((l) => totalPoints >= l.min && totalPoints < l.max) ?? levels[levels.length - 1]
+  const current = levels.find(l => totalPoints >= l.min && totalPoints < l.max) ?? levels[levels.length - 1]
   const progress = current.max === Infinity ? 100 : ((totalPoints - current.min) / (current.max - current.min)) * 100
   return { ...current, progress }
 }
@@ -28,14 +43,18 @@ const LEVEL_EMOJI: Record<number, string> = {
 }
 
 export function CompactMypagePanel() {
-  const { user, refreshProfile } = useAuthStore()
+  const { user, refreshProfile, setUser } = useAuthStore()
   const [pointLogs, setPointLogs] = useState<PointLog[]>([])
   const [recentTasks, setRecentTasks] = useState<Task[]>([])
+  const [partItems, setPartItems] = useState<ShopItem[]>([])
+  const [ownedPartIds, setOwnedPartIds] = useState<Set<string>>(new Set())
+  const [openSlot, setOpenSlot] = useState<AvatarSlotKey | null>(null)
 
   useEffect(() => {
     if (!user) return
     refreshProfile()
     loadData()
+    loadPartsData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
 
@@ -50,20 +69,62 @@ export function CompactMypagePanel() {
     if (taskResult.data) setRecentTasks(taskResult.data as Task[])
   }
 
+  const loadPartsData = async () => {
+    if (!user) return
+    const supabase = createClient()
+    const [itemsResult, purchasesResult] = await Promise.all([
+      supabase.from("shop_items").select("*").in("category", ["hair", "face", "top", "bottom", "shoes"]).order("price"),
+      supabase.from("purchases").select("item_id").eq("user_id", user.id),
+    ])
+    if (itemsResult.data) setPartItems(itemsResult.data as ShopItem[])
+    if (purchasesResult.data) setOwnedPartIds(new Set(purchasesResult.data.map(p => p.item_id)))
+  }
+
+  const handleEquip = async (slot: AvatarSlotKey, imageKey: string) => {
+    if (!user) return
+    const item = partItems.find(i => i.image_key === imageKey)
+
+    // 0P 아이템이고 구매 기록 없으면 자동 구매 처리
+    if (item && item.price === 0 && !ownedPartIds.has(item.id)) {
+      const supabase = createClient()
+      await supabase.from("purchases").insert({ user_id: user.id, item_id: item.id })
+      setOwnedPartIds(prev => new Set([...prev, item.id]))
+    }
+
+    const supabase = createClient()
+    await supabase.from("profiles").update({ [`avatar_${slot}`]: imageKey }).eq("id", user.id)
+    setUser({ ...user, [`avatar_${slot}`]: imageKey } as Profile)
+    setOpenSlot(null)
+    toast.success(`${item?.name ?? imageKey} 장착 완료!`)
+  }
+
   if (!user) return null
   const level = getLevel(user.total_points_earned)
+
+  // 장착된 파츠 image_key 가져오기 (필드가 없으면 기본값)
+  const equippedKey = (slot: AvatarSlotKey) =>
+    (user[`avatar_${slot}` as keyof Profile] as string | undefined) ?? `${slot}_default`
 
   return (
     <div className="p-3 space-y-3">
       {/* 프로필 헤더 */}
       <div className="rounded-lg bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-3">
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold">
-              {user.nickname.charAt(0).toUpperCase()}
+          {/* 아바타 미리보기 (전체 픽셀아트) */}
+          <div className="relative flex-shrink-0">
+            <div className="rounded-full border-2 border-primary/30 overflow-hidden bg-muted/30">
+              <MiniAvatar
+                hairKey={equippedKey("hair")}
+                faceKey={equippedKey("face")}
+                topKey={equippedKey("top")}
+                bottomKey={equippedKey("bottom")}
+                shoesKey={equippedKey("shoes")}
+                size={52}
+              />
             </div>
             <span className="absolute -bottom-1 -right-1 text-sm">{LEVEL_EMOJI[level.level] ?? "🌱"}</span>
           </div>
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1">
               <p className="text-sm font-bold truncate">{user.nickname}</p>
@@ -105,15 +166,86 @@ export function CompactMypagePanel() {
         ))}
       </div>
 
+      {/* 내 파츠 슬롯 */}
+      <div>
+        <p className="mb-1.5 text-xs font-semibold">내 아바타 파츠</p>
+        <div className="space-y-1.5">
+          {AVATAR_SLOTS.map(({ key, label }) => {
+            const currentKey = equippedKey(key)
+            const currentItem = partItems.find(i => i.image_key === currentKey)
+            const ownedSlotItems = partItems.filter(
+              i => i.category === key && (ownedPartIds.has(i.id) || i.price === 0)
+            )
+            return (
+              <div key={key} className="flex items-center gap-2 rounded-lg border px-2 py-1.5">
+                <div className="flex-shrink-0">
+                  <PartIcon slot={key} imageKey={currentKey} size={28} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted-foreground">{label}</p>
+                  <p className="text-xs font-medium truncate">{currentItem?.name ?? "기본"}</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 text-[10px] px-2 flex-shrink-0"
+                  disabled={ownedSlotItems.length === 0}
+                  onClick={() => setOpenSlot(key)}
+                >
+                  변경
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 파츠 변경 Dialog */}
+      {openSlot && (
+        <Dialog open={!!openSlot} onOpenChange={() => setOpenSlot(null)}>
+          <DialogContent className="max-w-xs">
+            <DialogHeader>
+              <DialogTitle className="text-sm">
+                {AVATAR_SLOTS.find(s => s.key === openSlot)?.label} 파츠 변경
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-3 gap-2">
+              {partItems
+                .filter(i => i.category === openSlot && (ownedPartIds.has(i.id) || i.price === 0))
+                .map(item => {
+                  const isEquipped = item.image_key === equippedKey(openSlot)
+                  return (
+                    <button
+                      key={item.id}
+                      className={`rounded-lg border p-2 text-center transition-colors ${
+                        isEquipped ? "border-primary bg-primary/10" : "hover:bg-accent border-transparent"
+                      }`}
+                      onClick={() => handleEquip(openSlot, item.image_key)}
+                    >
+                      <div className="mx-auto mb-1 flex items-center justify-center">
+                        <PartIcon slot={openSlot} imageKey={item.image_key} size={40} />
+                      </div>
+                      <p className="text-[10px] leading-tight">{item.name}</p>
+                      {isEquipped && (
+                        <p className="mt-0.5 text-[9px] text-primary font-semibold">착용중</p>
+                      )}
+                    </button>
+                  )
+                })}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* 포인트 내역 */}
       <div>
         <p className="mb-1.5 text-xs font-semibold">포인트 내역</p>
-        <ScrollArea className="h-[120px]">
+        <ScrollArea className="h-[100px]">
           {pointLogs.length === 0 ? (
             <p className="py-4 text-center text-xs text-muted-foreground">내역 없음</p>
           ) : (
             <div className="space-y-1">
-              {pointLogs.map((log) => (
+              {pointLogs.map(log => (
                 <div key={log.id} className="flex items-center justify-between rounded border px-2 py-1.5">
                   <div className="min-w-0 flex-1">
                     <p className="text-xs truncate">{log.reason}</p>
@@ -134,12 +266,12 @@ export function CompactMypagePanel() {
       {/* 완료 과제 */}
       <div>
         <p className="mb-1.5 text-xs font-semibold">완료한 과제</p>
-        <ScrollArea className="h-[100px]">
+        <ScrollArea className="h-[80px]">
           {recentTasks.length === 0 ? (
             <p className="py-4 text-center text-xs text-muted-foreground">없음</p>
           ) : (
             <div className="space-y-1">
-              {recentTasks.map((task) => (
+              {recentTasks.map(task => (
                 <div key={task.id} className="flex items-center justify-between rounded border px-2 py-1.5">
                   <div className="min-w-0 flex-1">
                     <p className="text-xs truncate">{task.title}</p>

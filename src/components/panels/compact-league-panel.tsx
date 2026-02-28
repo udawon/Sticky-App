@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Star, Target, Flame } from "lucide-react"
+import { MiniAvatar } from "@/components/avatar/mini-avatar"
 import type { Profile } from "@/types/database"
 
 export function CompactLeaguePanel() {
@@ -87,8 +88,15 @@ export function CompactLeaguePanel() {
               } ${member.id === user?.id ? "ring-1 ring-primary/30" : ""}`}
             >
               <div className="flex w-5 justify-center">{getRankIcon(index)}</div>
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                {member.nickname.charAt(0).toUpperCase()}
+              <div className="flex items-end justify-center h-[28px] w-[28px] rounded-md border border-background overflow-hidden bg-muted/30 shrink-0">
+                <MiniAvatar
+                  hairKey={member.avatar_hair ?? "hair_default"}
+                  faceKey={member.avatar_face ?? "face_default"}
+                  topKey={member.avatar_top ?? "top_default"}
+                  bottomKey={member.avatar_bottom ?? "bottom_default"}
+                  shoesKey={member.avatar_shoes ?? "shoes_default"}
+                  size={28}
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MoreVertical, Calendar } from "lucide-react"
-import { getAvatarColor } from "@/lib/utils/avatar"
+import { MiniAvatar } from "@/components/avatar/mini-avatar"
 import type { Task, TaskStatus, UserRole, Profile } from "@/types/database"
 
 interface TaskCardProps {
@@ -102,18 +102,25 @@ export function TaskCard({
       <div className="flex items-center gap-1.5 min-w-0">
         {/* 담당자 아바타 */}
         {assignees.length > 0 && (
-          <div className="flex -space-x-1 shrink-0">
+          <div className="flex -space-x-2 shrink-0">
             {assignees.slice(0, 2).map((member) => (
               <div
                 key={member.id}
-                className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border border-background ${getAvatarColor(member.id)} text-white text-[8px] font-bold`}
+                className="flex items-end justify-center h-[28px] w-[28px] rounded-md border border-background overflow-hidden bg-muted/30"
                 title={member.nickname}
               >
-                {member.nickname.charAt(0).toUpperCase()}
+                <MiniAvatar
+                  hairKey={member.avatar_hair ?? "hair_default"}
+                  faceKey={member.avatar_face ?? "face_default"}
+                  topKey={member.avatar_top ?? "top_default"}
+                  bottomKey={member.avatar_bottom ?? "bottom_default"}
+                  shoesKey={member.avatar_shoes ?? "shoes_default"}
+                  size={28}
+                />
               </div>
             ))}
             {assignees.length > 2 && (
-              <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full border border-background bg-muted text-[8px] font-bold">
+              <div className="flex h-[28px] w-[28px] items-center justify-center rounded-md border border-background bg-muted text-[8px] font-bold">
                 +{assignees.length - 2}
               </div>
             )}

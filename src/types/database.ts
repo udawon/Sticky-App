@@ -15,6 +15,12 @@ export interface Profile {
   team_id: string | null
   avatar_body: string
   avatar_accessories: string[]
+  // 아바타 파츠 (5슬롯)
+  avatar_hair: string
+  avatar_face: string
+  avatar_top: string
+  avatar_bottom: string
+  avatar_shoes: string
   points: number
   total_points_earned: number
   tasks_completed: number
@@ -64,7 +70,7 @@ export interface ShopItem {
   id: string
   name: string
   description: string
-  category: "body" | "accessory"
+  category: "body" | "accessory" | "hair" | "face" | "top" | "bottom" | "shoes"
   image_key: string
   price: number
   created_at: string

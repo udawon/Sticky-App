@@ -6,7 +6,7 @@ import { usePanelStore, type PanelType } from "@/stores/panel-store"
 import { createClient } from "@/lib/supabase/client"
 
 // ─── 픽셀아트 설정 ───
-const T = 15
+const T = 13
 const COLS = 12
 const ROWS = 17
 const IW = COLS * T
@@ -88,8 +88,8 @@ const OBJS: MapObj[] = [
   //  서: 거울(2,7) 자판기(2,9) / 동: 설정(8,9)
   //  남: 관리자(5,11)
   { x: 5, y: 5, w: 2, h: 1, type: "chalkboard", label: "📋 과제 보드", interactable: true, panelType: "tasks" },
-  { x: 9, y: 7, w: 1, h: 1, type: "trophy_case", label: "🏆 리더보드", interactable: true, panelType: "league" },
-  { x: 2, y: 7, w: 1, h: 1, type: "mirror", label: "🪞 마이페이지", interactable: true, panelType: "mypage" },
+  { x: 9, y: 6, w: 1, h: 1, type: "trophy_case", label: "🏆 리더보드", interactable: true, panelType: "league" },
+  { x: 2, y: 6, w: 1, h: 1, type: "mirror", label: "🪞 마이페이지", interactable: true, panelType: "mypage" },
   { x: 9, y: 9, w: 1, h: 1, type: "printer", label: "🖨️ 설정", interactable: true, panelType: "settings" },
   { x: 2, y: 9, w: 1, h: 1, type: "vending", label: "🏪 자판기", interactable: true, panelType: "shop" },
   { x: 5, y: 11, w: 2, h: 1, type: "admin_desk", label: "🔒 관리자", interactable: true, panelType: "admin", adminOnly: true },
@@ -178,10 +178,56 @@ function getNearby(c: number, r: number, admin: boolean): MapObj | undefined {
 }
 
 // ─── 아바타 ───
-interface AvatarPos { id: string; col: number; row: number; nickname: string; avatarBody: string }
+interface AvatarPartColors {
+  hair: string; face: string; top: string; bottom: string; shoes: string
+  hairKey: string; faceKey: string; topKey: string; bottomKey: string; shoesKey: string
+}
+interface AvatarPos {
+  id: string; col: number; row: number; nickname: string; avatarBody: string
+  avatarHair: string; avatarFace: string; avatarTop: string; avatarBottom: string; avatarShoes: string
+}
 const ACOL: Record<string, string> = {
   default: "#6366f1", avatar_blue: "#3b82f6", avatar_red: "#ef4444", avatar_gold: "#f59e0b",
 }
+// 슬롯별 image_key → hex 색상 매핑
+const PART_COLORS: Record<string, Record<string, string>> = {
+  hair: {
+    hair_default: "#4338ca",
+    hat_cap: "#1f2937",
+    hat_crown: "#f59e0b",
+    hat_beanie: "#ec4899",
+    hat_top: "#1c1c24",
+  },
+  face: {
+    face_default: "#f0c8a0",
+    face_sunglasses: "#f0c8a0",
+    face_wink: "#f0c8a0",
+    face_angry: "#f0c8a0",
+    face_cat: "#fce8d0",
+  },
+  top: {
+    top_default: "#6366f1",
+    top_hoodie:  "#16a34a",
+    top_suit:    "#1e3a8a",
+    top_stripe:  "#dc2626",
+    top_sports:  "#2563eb",
+  },
+  bottom: {
+    bottom_default: "#404050",
+    bottom_shorts:  "#92400e",
+    bottom_skirt:   "#be185d",
+    bottom_cargo:   "#365314",
+    bottom_slacks:  "#1e3a8a",
+  },
+  shoes: {
+    shoes_default: "#3730a3",
+    shoes_boots:   "#78350f",
+    shoes_flats:   "#f9a8d4",
+    shoes_heels:   "#b91c1c",
+    shoes_formal:  "#111827",
+  },
+}
+const SKIN_DEFAULT = "#f0c8a0"
 
 // ─── 캐릭터 스프라이트 (9x13) ───
 const CHAR_SPRITE = [
@@ -203,6 +249,237 @@ const CHAR_SPRITE = [
 // ─── 픽셀 헬퍼 ───
 function px(ctx: CanvasRenderingContext2D, ix: number, iy: number, w = 1, h = 1) {
   ctx.fillRect(ix * S, iy * S, w * S, h * S)
+}
+
+// ─── 모자 오버레이 (기본 스프라이트 위에 추가로 그림) ───
+function drawHatOverlay(ctx: CanvasRenderingContext2D, ox: number, oy: number, hairKey: string, hairColor: string) {
+  switch (hairKey) {
+    case "hat_cap": {
+      // 야구모자: 전체 너비 챙 (얼굴 위) + 버튼
+      ctx.fillStyle = darken(hairColor, 0.45)
+      px(ctx, ox + 0, oy + 2, 9, 1) // 챙 (전체 너비, 진하게)
+      ctx.fillStyle = darken(hairColor, 0.25)
+      px(ctx, ox + 3, oy - 1, 3, 1) // 모자 앞판 밴드
+      ctx.fillStyle = lighten(hairColor, 0.5)
+      px(ctx, ox + 4, oy + 0, 1, 1) // 캡 버튼 (중앙 상단)
+      break
+    }
+    case "hat_crown": {
+      // 왕관: 두꺼운 밴드 + 3개 굵은 기둥 + 보석
+      ctx.fillStyle = "#e7a000"      // 짙은 금
+      px(ctx, ox + 1, oy - 1, 7, 2) // 왕관 밴드 (두꺼움, 2행)
+      px(ctx, ox + 2, oy - 3, 2, 2) // 좌 기둥 (2px 굵기)
+      px(ctx, ox + 4, oy - 4, 1, 3) // 중앙 기둥 (가장 높음)
+      px(ctx, ox + 5, oy - 3, 2, 2) // 우 기둥 (2px 굵기)
+      ctx.fillStyle = "#ef4444"      // 중앙 루비
+      px(ctx, ox + 4, oy - 4, 1, 1)
+      ctx.fillStyle = "#3b82f6"      // 사파이어
+      px(ctx, ox + 2, oy - 3, 1, 1) // 좌
+      px(ctx, ox + 6, oy - 3, 1, 1) // 우
+      ctx.fillStyle = "#f7d060"      // 금색 하이라이트
+      px(ctx, ox + 3, oy - 1, 1, 1) // 밴드 하이라이트1
+      px(ctx, ox + 5, oy - 1, 1, 1) // 밴드 하이라이트2
+      break
+    }
+    case "hat_beanie": {
+      // 비니: 두꺼운 몸통 + 큰 폼폼
+      ctx.fillStyle = hairColor
+      px(ctx, ox + 2, oy - 1, 5, 2) // 비니 몸통 (2행 두꺼움)
+      px(ctx, ox + 3, oy - 3, 3, 2) // 비니 상단 볼록
+      ctx.fillStyle = lighten(hairColor, 0.55) // 폼폼 (밝게)
+      px(ctx, ox + 3, oy - 5, 3, 2) // 폼폼 (2행 두꺼움)
+      px(ctx, ox + 4, oy - 6, 1, 1) // 폼폼 꼭대기
+      break
+    }
+    case "hat_top": {
+      // 중절모: 키 큰 몸체 + 넓은 챙
+      ctx.fillStyle = hairColor
+      px(ctx, ox + 3, oy - 4, 3, 4) // 모자 몸체 (높은, 4행)
+      ctx.fillStyle = lighten(hairColor, 0.18)
+      px(ctx, ox + 3, oy - 4, 3, 1) // 상단 하이라이트
+      ctx.fillStyle = darken(hairColor, 0.15)
+      px(ctx, ox + 1, oy + 0, 7, 1) // 넓은 챙
+      break
+    }
+  }
+}
+
+// ─── 표정 오버레이 (기본 스프라이트 위에 추가로 그림) ───
+function drawFaceOverlay(ctx: CanvasRenderingContext2D, ox: number, oy: number, faceKey: string, faceColor: string) {
+  switch (faceKey) {
+    case "face_sunglasses": {
+      // 선글라스: 2x2 어두운 렌즈 + 프레임
+      ctx.fillStyle = "#1c1c2c"
+      px(ctx, ox + 2, oy + 3, 2, 2) // 좌 렌즈 (2x2)
+      px(ctx, ox + 5, oy + 3, 2, 2) // 우 렌즈 (2x2)
+      px(ctx, ox + 4, oy + 3, 1, 1) // 코 브릿지
+      ctx.fillStyle = "#2c2c44"
+      px(ctx, ox + 1, oy + 3, 1, 2) // 좌 안경다리 (h=2)
+      px(ctx, ox + 7, oy + 3, 1, 2) // 우 안경다리 (h=2)
+      break
+    }
+    case "face_wink": {
+      // 윙크: 좌 눈 닫기 (두꺼운 선)
+      ctx.fillStyle = faceColor
+      px(ctx, ox + 2, oy + 3, 3, 2) // 좌 눈 영역 지우기
+      ctx.fillStyle = darken(faceColor, 0.5)
+      px(ctx, ox + 2, oy + 3, 3, 1) // 닫힌 눈 선
+      px(ctx, ox + 2, oy + 4, 3, 1) // 속눈썹 선
+      break
+    }
+    case "face_angry": {
+      // 화남: 사선 눈썹 + 붉은 기운
+      ctx.fillStyle = darken(faceColor, 0.55)
+      px(ctx, ox + 2, oy + 2, 2, 1) // 좌 눈썹
+      px(ctx, ox + 5, oy + 2, 2, 1) // 우 눈썹
+      ctx.fillStyle = "rgba(239,68,68,0.3)" // 붉은 볼 기운
+      px(ctx, ox + 2, oy + 4, 2, 1)
+      px(ctx, ox + 5, oy + 4, 2, 1)
+      break
+    }
+    case "face_cat": {
+      // 고양이: 큰 귀 + 분홍 코 + 수염
+      ctx.fillStyle = darken(faceColor, 0.12)
+      px(ctx, ox + 2, oy - 1, 2, 1) // 좌 귀 (2px)
+      px(ctx, ox + 3, oy - 2, 1, 1) // 좌 귀 뾰족
+      px(ctx, ox + 5, oy - 2, 1, 1) // 우 귀 뾰족
+      px(ctx, ox + 5, oy - 1, 2, 1) // 우 귀 (2px)
+      ctx.fillStyle = "#f472b6"
+      px(ctx, ox + 3, oy + 4, 3, 1) // 분홍 코 (3px)
+      ctx.fillStyle = darken(faceColor, 0.3)
+      px(ctx, ox + 1, oy + 5, 2, 1) // 좌 수염
+      px(ctx, ox + 6, oy + 5, 2, 1) // 우 수염
+      break
+    }
+  }
+}
+
+// ─── 상의 오버레이 ───
+function drawTopOverlay(ctx: CanvasRenderingContext2D, ox: number, oy: number, topKey: string, topColor: string) {
+  switch (topKey) {
+    case "top_hoodie": {
+      ctx.fillStyle = darken(topColor, 0.12)
+      px(ctx, ox + 1, oy + 1, 1, 4) // 좌 후드
+      px(ctx, ox + 7, oy + 1, 1, 4) // 우 후드
+      ctx.fillStyle = darken(topColor, 0.22)
+      px(ctx, ox + 3, oy + 8, 3, 2) // 앞 포켓
+      ctx.fillStyle = lighten(topColor, 0.35)
+      px(ctx, ox + 3, oy + 6, 1, 2) // 좌 후드 끈
+      px(ctx, ox + 5, oy + 6, 1, 2) // 우 후드 끈
+      break
+    }
+    case "top_suit": {
+      ctx.fillStyle = "#f4f6f8"
+      px(ctx, ox + 3, oy + 6, 1, 3) // 좌 셔츠
+      px(ctx, ox + 5, oy + 6, 1, 3) // 우 셔츠
+      ctx.fillStyle = "#ef4444"
+      px(ctx, ox + 4, oy + 6, 1, 3) // 넥타이
+      ctx.fillStyle = darken("#ef4444", 0.25)
+      px(ctx, ox + 4, oy + 9, 1, 1) // 넥타이 끝
+      ctx.fillStyle = darken(topColor, 0.28)
+      px(ctx, ox + 2, oy + 7, 1, 2) // 좌 라펠
+      px(ctx, ox + 6, oy + 7, 1, 2) // 우 라펠
+      ctx.fillStyle = "#f0f8ff"
+      px(ctx, ox + 2, oy + 6, 1, 1) // 가슴 포켓 치프
+      break
+    }
+    case "top_stripe": {
+      ctx.fillStyle = lighten(topColor, 0.45)
+      px(ctx, ox + 2, oy + 7, 5, 1) // 상단 스트라이프
+      px(ctx, ox + 1, oy + 9, 7, 1) // 하단 스트라이프
+      ctx.fillStyle = "#f4f6f8"
+      px(ctx, ox + 3, oy + 6, 1, 2) // 칼라 좌
+      px(ctx, ox + 5, oy + 6, 1, 2) // 칼라 우
+      break
+    }
+    case "top_sports": {
+      ctx.fillStyle = SKIN_DEFAULT
+      px(ctx, ox + 3, oy + 6, 1, 2) // 좌 V넥
+      px(ctx, ox + 5, oy + 6, 1, 2) // 우 V넥
+      ctx.fillStyle = "rgba(255,255,255,0.55)"
+      px(ctx, ox + 2, oy + 6, 1, 4) // 좌 스트라이프
+      px(ctx, ox + 6, oy + 6, 1, 4) // 우 스트라이프
+      break
+    }
+  }
+}
+
+// ─── 하의 오버레이 ───
+function drawBottomOverlay(ctx: CanvasRenderingContext2D, ox: number, oy: number, bottomKey: string, bottomColor: string) {
+  switch (bottomKey) {
+    case "bottom_shorts": {
+      ctx.fillStyle = SKIN_DEFAULT
+      px(ctx, ox + 2, oy + 11, 2, 1) // 좌 종아리 (피부)
+      px(ctx, ox + 5, oy + 11, 2, 1) // 우 종아리 (피부)
+      ctx.fillStyle = darken(bottomColor, 0.2)
+      px(ctx, ox + 3, oy + 10, 3, 1) // 반바지 밑단 라인
+      break
+    }
+    case "bottom_skirt": {
+      ctx.fillStyle = bottomColor
+      px(ctx, ox + 1, oy + 11, 7, 1) // 넓은 스커트 밑단
+      ctx.fillStyle = darken(bottomColor, 0.22)
+      px(ctx, ox + 2, oy + 10, 1, 2) // 좌 주름
+      px(ctx, ox + 6, oy + 10, 1, 2) // 우 주름
+      ctx.fillStyle = lighten(bottomColor, 0.2)
+      px(ctx, ox + 4, oy + 10, 1, 2) // 중앙 하이라이트
+      break
+    }
+    case "bottom_cargo": {
+      ctx.fillStyle = darken(bottomColor, 0.22)
+      px(ctx, ox + 1, oy + 10, 1, 2) // 좌 포켓 플랩
+      px(ctx, ox + 7, oy + 10, 1, 2) // 우 포켓 플랩
+      ctx.fillStyle = lighten(bottomColor, 0.18)
+      px(ctx, ox + 1, oy + 10, 1, 1) // 포켓 상단 라인 좌
+      px(ctx, ox + 7, oy + 10, 1, 1) // 포켓 상단 라인 우
+      break
+    }
+    case "bottom_slacks": {
+      ctx.fillStyle = lighten(bottomColor, 0.25)
+      px(ctx, ox + 3, oy + 10, 1, 2) // 좌 크리즈
+      px(ctx, ox + 5, oy + 10, 1, 2) // 우 크리즈
+      break
+    }
+  }
+}
+
+// ─── 신발 오버레이 ───
+function drawShoesOverlay(ctx: CanvasRenderingContext2D, ox: number, oy: number, shoesKey: string, shoesColor: string) {
+  switch (shoesKey) {
+    case "shoes_boots": {
+      ctx.fillStyle = shoesColor
+      px(ctx, ox + 2, oy + 11, 2, 1) // 좌 부츠 상단
+      px(ctx, ox + 5, oy + 11, 2, 1) // 우 부츠 상단
+      ctx.fillStyle = "#ca8a04" // 골드 버클
+      px(ctx, ox + 3, oy + 11, 1, 1)
+      px(ctx, ox + 5, oy + 11, 1, 1)
+      break
+    }
+    case "shoes_flats": {
+      ctx.fillStyle = lighten(shoesColor, 0.45)
+      px(ctx, ox + 2, oy + 12, 1, 1) // 좌 리본
+      px(ctx, ox + 5, oy + 12, 1, 1) // 우 리본
+      break
+    }
+    case "shoes_heels": {
+      ctx.fillStyle = lighten(shoesColor, 0.35)
+      px(ctx, ox + 2, oy + 12, 1, 1) // 좌 앞코 광택
+      px(ctx, ox + 5, oy + 12, 1, 1) // 우 앞코 광택
+      ctx.fillStyle = darken(shoesColor, 0.1)
+      px(ctx, ox + 3, oy + 13, 1, 1) // 좌 굽
+      px(ctx, ox + 6, oy + 13, 1, 1) // 우 굽
+      break
+    }
+    case "shoes_formal": {
+      ctx.fillStyle = lighten(shoesColor, 0.5)
+      px(ctx, ox + 2, oy + 12, 1, 1) // 좌 광택
+      px(ctx, ox + 5, oy + 12, 1, 1) // 우 광택
+      ctx.fillStyle = "#1c1c1c"
+      px(ctx, ox + 2, oy + 13, 2, 1) // 좌 밑창
+      px(ctx, ox + 5, oy + 13, 2, 1) // 우 밑창
+      break
+    }
+  }
 }
 
 // ─── 정적 레이어 빌드 ───
@@ -381,7 +658,19 @@ function buildStatic(role?: string): HTMLCanvasElement {
     const sx = o.x * T + 2, sy = o.y * T + o.h * T - 1
     c.fillStyle = P.shadow
     c.fillRect(sx, sy, o.w * T - 3, 2)
-    drawObj(c, o, role)
+    if (o.interactable) {
+      // 인터랙션 오브젝트: 1.2배 크게 (타일 중심 기준)
+      const cx = (o.x + o.w / 2) * T
+      const cy = (o.y + o.h / 2) * T
+      c.save()
+      c.translate(cx, cy)
+      c.scale(1.0, 1.0)
+      c.translate(-cx, -cy)
+      drawObj(c, o, role)
+      c.restore()
+    } else {
+      drawObj(c, o, role)
+    }
   })
 
   return cv
@@ -908,8 +1197,8 @@ function lighten(hex: string, amt: number): string {
   return `rgb(${Math.min(255, Math.floor(r + (255 - r) * amt))},${Math.min(255, Math.floor(g + (255 - g) * amt))},${Math.min(255, Math.floor(b + (255 - b) * amt))})`
 }
 
-// ─── 아바타 렌더링 ───
-function drawChar(ctx: CanvasRenderingContext2D, col: number, row: number, nickname: string, color: string, isMe: boolean) {
+// ─── 아바타 렌더링 (파츠 기반) ───
+function drawChar(ctx: CanvasRenderingContext2D, col: number, row: number, nickname: string, parts: AvatarPartColors, isMe: boolean) {
   const icx = col * T + Math.floor(T / 2)
   const icy = row * T + Math.floor(T / 2)
   const ox = icx - 4, oy = icy - 6
@@ -921,13 +1210,16 @@ function drawChar(ctx: CanvasRenderingContext2D, col: number, row: number, nickn
   px(ctx, ox + 1, oy + 13, 1, 1)
   px(ctx, ox + 7, oy + 13, 1, 1)
 
-  const bodyColor = darken(color, 0.05)
-  const bodyLt = lighten(color, 0.15)
-  const hairColor = darken(color, 0.3)
-  const shoeColor = darken(color, 0.4)
   const colors: Record<string, string> = {
-    H: hairColor, S: P.skin, E: "#282830", Q: P.skinLt, M: darken(P.skin, 0.08),
-    B: bodyColor, C: bodyLt, L: "#404050", F: shoeColor,
+    H: parts.hair,
+    S: parts.face,
+    E: "#282830",
+    Q: lighten(parts.face, 0.1),
+    M: darken(parts.face, 0.08),
+    B: parts.top,
+    C: lighten(parts.top, 0.15),
+    L: parts.bottom,
+    F: parts.shoes,
   }
 
   CHAR_SPRITE.forEach((srow, ry) => {
@@ -939,24 +1231,36 @@ function drawChar(ctx: CanvasRenderingContext2D, col: number, row: number, nickn
     }
   })
 
+  // 표정 오버레이 (아웃라인 이전)
+  drawFaceOverlay(ctx, ox, oy, parts.faceKey, parts.face)
+
   // 아웃라인
-  ctx.fillStyle = darken(hairColor, 0.3)
+  ctx.fillStyle = darken(parts.hair, 0.3)
   px(ctx, ox + 2, oy - 1, 5, 1)
   px(ctx, ox + 1, oy, 1, 4)
   px(ctx, ox + 7, oy, 1, 4)
 
-  // 내 캐릭터 표시 (▼)
+  // 모자 오버레이 (아웃라인 이후 - 모자가 아웃라인 위에 그려짐)
+  drawHatOverlay(ctx, ox, oy, parts.hairKey, parts.hair)
+
+  // 상의/하의/신발 오버레이
+  drawTopOverlay(ctx, ox, oy, parts.topKey, parts.top)
+  drawBottomOverlay(ctx, ox, oy, parts.bottomKey, parts.bottom)
+  drawShoesOverlay(ctx, ox, oy, parts.shoesKey, parts.shoes)
+
+  // 내 캐릭터 표시 (▼) - 모자 장착 시 위로 이동해 겹침 방지
   if (isMe) {
+    const hatLift = parts.hairKey !== "hair_default" ? 5 : 0
     ctx.fillStyle = "#f0f0f0"
-    px(ctx, ox + 4, oy - 4)
-    px(ctx, ox + 3, oy - 3, 3, 1)
-    px(ctx, ox + 2, oy - 2, 5, 1)
-    ctx.fillStyle = darken(color, 0.2)
-    px(ctx, ox + 4, oy - 5)
-    px(ctx, ox + 2, oy - 3, 1, 1)
-    px(ctx, ox + 6, oy - 3, 1, 1)
-    px(ctx, ox + 1, oy - 2, 1, 1)
-    px(ctx, ox + 7, oy - 2, 1, 1)
+    px(ctx, ox + 4, oy - 4 - hatLift)
+    px(ctx, ox + 3, oy - 3 - hatLift, 3, 1)
+    px(ctx, ox + 2, oy - 2 - hatLift, 5, 1)
+    ctx.fillStyle = darken(parts.hair, 0.2)
+    px(ctx, ox + 4, oy - 5 - hatLift)
+    px(ctx, ox + 2, oy - 3 - hatLift, 1, 1)
+    px(ctx, ox + 6, oy - 3 - hatLift, 1, 1)
+    px(ctx, ox + 1, oy - 2 - hatLift, 1, 1)
+    px(ctx, ox + 7, oy - 2 - hatLift, 1, 1)
   }
 }
 
@@ -988,7 +1292,12 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     }).on("broadcast", { event: "leave" }, ({ payload }) => {
       setOthers(prev => prev.filter(a => a.id !== payload.id))
     }).subscribe()
-    ch.send({ type: "broadcast", event: "position", payload: { id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body } })
+    ch.send({ type: "broadcast", event: "position", payload: {
+      id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body,
+      avatarHair: user.avatar_hair ?? "hair_default", avatarFace: user.avatar_face ?? "face_default",
+      avatarTop: user.avatar_top ?? "top_default", avatarBottom: user.avatar_bottom ?? "bottom_default",
+      avatarShoes: user.avatar_shoes ?? "shoes_default",
+    } })
     return () => { ch.send({ type: "broadcast", event: "leave", payload: { id: user.id } }); supabase.removeChannel(ch) }
   }, [user])
 
@@ -996,7 +1305,12 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     if (!user?.team_id) return
     const supabase = createClient()
     const ch = supabase.channel(`office:${user.team_id}`)
-    ch.send({ type: "broadcast", event: "position", payload: { id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body } })
+    ch.send({ type: "broadcast", event: "position", payload: {
+      id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body,
+      avatarHair: user.avatar_hair ?? "hair_default", avatarFace: user.avatar_face ?? "face_default",
+      avatarTop: user.avatar_top ?? "top_default", avatarBottom: user.avatar_bottom ?? "bottom_default",
+      avatarShoes: user.avatar_shoes ?? "shoes_default",
+    } })
   }, [myPos])
 
   useEffect(() => {
@@ -1024,11 +1338,41 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    // DPR 지원: 물리 해상도에 맞게 캔버스 크기 설정
+    const dpr = window.devicePixelRatio || 1
+    const cssW = canvas.clientWidth || DW
+    const cssH = canvas.clientHeight || DH
+    canvas.width = Math.round(cssW * dpr)
+    canvas.height = Math.round(cssH * dpr)
+    ctx.setTransform((cssW / DW) * dpr, 0, 0, (cssH / DH) * dpr, 0, 0)
+
     ctx.imageSmoothingEnabled = false
     if (staticRef.current) ctx.drawImage(staticRef.current, 0, 0, DW, DH)
 
-    others.forEach(a => drawChar(ctx, a.col, a.row, a.nickname, ACOL[a.avatarBody] ?? ACOL.default, false))
-    if (user) drawChar(ctx, myPos.col, myPos.row, user.nickname, ACOL[user.avatar_body] ?? ACOL.default, true)
+    others.forEach(a => drawChar(ctx, a.col, a.row, a.nickname, {
+      hair:   PART_COLORS.hair[a.avatarHair]     ?? PART_COLORS.hair.hair_default,
+      face:   PART_COLORS.face[a.avatarFace]     ?? PART_COLORS.face.face_default,
+      top:    PART_COLORS.top[a.avatarTop]       ?? PART_COLORS.top.top_default,
+      bottom: PART_COLORS.bottom[a.avatarBottom] ?? PART_COLORS.bottom.bottom_default,
+      shoes:  PART_COLORS.shoes[a.avatarShoes]   ?? PART_COLORS.shoes.shoes_default,
+      hairKey:   a.avatarHair,
+      faceKey:   a.avatarFace,
+      topKey:    a.avatarTop,
+      bottomKey: a.avatarBottom,
+      shoesKey:  a.avatarShoes,
+    }, false))
+    if (user) drawChar(ctx, myPos.col, myPos.row, user.nickname, {
+      hair:   PART_COLORS.hair[user.avatar_hair   ?? "hair_default"]   ?? PART_COLORS.hair.hair_default,
+      face:   PART_COLORS.face[user.avatar_face   ?? "face_default"]   ?? PART_COLORS.face.face_default,
+      top:    PART_COLORS.top[user.avatar_top     ?? "top_default"]    ?? PART_COLORS.top.top_default,
+      bottom: PART_COLORS.bottom[user.avatar_bottom ?? "bottom_default"] ?? PART_COLORS.bottom.bottom_default,
+      shoes:  PART_COLORS.shoes[user.avatar_shoes   ?? "shoes_default"]  ?? PART_COLORS.shoes.shoes_default,
+      hairKey:   user.avatar_hair   ?? "hair_default",
+      faceKey:   user.avatar_face   ?? "face_default",
+      topKey:    user.avatar_top    ?? "top_default",
+      bottomKey: user.avatar_bottom ?? "bottom_default",
+      shoesKey:  user.avatar_shoes  ?? "shoes_default",
+    }, true)
 
     // 하이라이트 (모던: 블루 글로우)
     if (nearby && !activePanel) {
@@ -1042,7 +1386,7 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     ctx.imageSmoothingEnabled = true
 
     // ── 오브젝트 상시 라벨 ──
-    ctx.font = "bold 7px 'Segoe UI', sans-serif"
+    ctx.font = "bold 8px 'Segoe UI', sans-serif"
     ctx.textAlign = "center"
     OBJS.forEach(o => {
       if (!o.interactable || !o.label) return
@@ -1054,22 +1398,22 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
       const tw = ctx.measureText(shortLabel).width + 8
       const bx = cx - tw / 2, by = cy - 1
       ctx.fillStyle = isNearby ? "rgba(59,130,246,0.9)" : "rgba(15,23,42,0.55)"
-      ctx.beginPath(); ctx.roundRect(bx, by, tw, 12, 3); ctx.fill()
+      ctx.beginPath(); ctx.roundRect(bx, by, tw, 12, 2); ctx.fill()
       ctx.fillStyle = "#fff"
       ctx.fillText(shortLabel, cx, cy + 8)
     })
 
-    // ── 아바타 닉네임 ──
+    // ── 아바타 닉네임 (오브젝트 라벨과 동일 크기) ──
     const allAv = [...others.map(a => ({ ...a, isMe: false })), ...(user ? [{ col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body, isMe: true, id: user.id }] : [])]
+    ctx.font = "bold 8px 'Segoe UI', sans-serif"
+    ctx.textAlign = "center"
     allAv.forEach(a => {
       const dx = a.col * T * S + T * S / 2, dy = a.row * T * S - 4
-      ctx.font = `${a.isMe ? "bold " : ""}9px 'Segoe UI', sans-serif`
-      ctx.textAlign = "center"
-      const tw = ctx.measureText(a.nickname).width + 12, nx = dx - tw / 2, ny = dy - 14
+      const tw = ctx.measureText(a.nickname).width + 12, nx = dx - tw / 2, ny = dy - 12
       ctx.fillStyle = a.isMe ? "rgba(99,102,241,0.9)" : "rgba(15,23,42,0.75)"
-      ctx.beginPath(); ctx.roundRect(nx, ny, tw, 14, 4); ctx.fill()
-      ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(nx + 5, ny + 7, 2.5, 0, Math.PI * 2); ctx.fill()
-      ctx.fillStyle = "#fff"; ctx.fillText(a.nickname, dx + 2, ny + 10.5)
+      ctx.beginPath(); ctx.roundRect(nx, ny, tw, 12, 2); ctx.fill()
+      ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(nx + 5, ny + 6, 2, 0, Math.PI * 2); ctx.fill()
+      ctx.fillStyle = "#fff"; ctx.fillText(a.nickname, dx + 2, ny + 9)
     })
 
     // ── 상호작용 안내 바 ──
@@ -1096,7 +1440,7 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
 
   return (
     <div className="relative flex-1" style={{ backgroundColor: "#b4b8be" }}>
-      <canvas ref={canvasRef} width={DW} height={DH} className="block w-full" tabIndex={0} style={{ imageRendering: "pixelated" }} />
+      <canvas ref={canvasRef} width={DW} height={DH} className="block w-full" tabIndex={0} />
       {/* HUD 오버레이 */}
       {!activePanel && user && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center p-2">

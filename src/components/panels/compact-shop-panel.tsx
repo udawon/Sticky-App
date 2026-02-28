@@ -6,32 +6,18 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Star, Check, Sparkles, ShoppingBag } from "lucide-react"
+import { Star, Check } from "lucide-react"
 import { toast } from "sonner"
+import { PartIcon } from "@/components/avatar/mini-avatar"
 import type { ShopItem, Purchase, Profile } from "@/types/database"
 
-const DEFAULT_ITEMS: Omit<ShopItem, "id" | "created_at">[] = [
-  { name: "기본 아바타", description: "기본 캐릭터 스킨", category: "body", image_key: "avatar_default", price: 0 },
-  { name: "블루 아바타", description: "시원한 블루 스킨", category: "body", image_key: "avatar_blue", price: 50 },
-  { name: "레드 아바타", description: "열정의 레드 스킨", category: "body", image_key: "avatar_red", price: 50 },
-  { name: "골드 아바타", description: "프리미엄 골드 스킨", category: "body", image_key: "avatar_gold", price: 200 },
-  { name: "왕관", description: "최고 리더를 위한 왕관", category: "accessory", image_key: "acc_crown", price: 150 },
-  { name: "선글라스", description: "멋진 선글라스", category: "accessory", image_key: "acc_sunglasses", price: 30 },
-  { name: "고양이 귀", description: "귀여운 고양이 귀", category: "accessory", image_key: "acc_cat_ears", price: 80 },
-  { name: "별 이펙트", description: "반짝이는 별 이펙트", category: "accessory", image_key: "acc_stars", price: 100 },
-]
-
-const ITEM_COLORS: Record<string, string> = {
-  avatar_default: "bg-gray-200", avatar_blue: "bg-blue-400",
-  avatar_red: "bg-red-400", avatar_gold: "bg-amber-400",
-  acc_crown: "bg-amber-300", acc_sunglasses: "bg-gray-600",
-  acc_cat_ears: "bg-pink-300", acc_stars: "bg-purple-300",
-}
-
-const ITEM_EMOJI: Record<string, string> = {
-  avatar_default: "🧑", avatar_blue: "🧊", avatar_red: "🔥", avatar_gold: "✨",
-  acc_crown: "👑", acc_sunglasses: "🕶️", acc_cat_ears: "🐱", acc_stars: "⭐",
-}
+const SLOT_TABS = [
+  { key: "hair",   label: "머리" },
+  { key: "face",   label: "얼굴" },
+  { key: "top",    label: "상의" },
+  { key: "bottom", label: "하의" },
+  { key: "shoes",  label: "신발" },
+] as const
 
 export function CompactShopPanel() {
   const { user, setUser } = useAuthStore()
@@ -52,19 +38,18 @@ export function CompactShopPanel() {
   }, [user?.id])
 
   const loadShopData = async () => {
+    if (!user) return
     const supabase = createClient()
-    const { data: shopItems } = await supabase.from("shop_items").select("*").order("price", { ascending: true })
+    const { data: shopItems } = await supabase
+      .from("shop_items")
+      .select("*")
+      .in("category", ["hair", "face", "top", "bottom", "shoes"])
+      .order("price", { ascending: true })
+    if (shopItems) setItems(shopItems as ShopItem[])
 
-    if (shopItems && shopItems.length > 0) {
-      setItems(shopItems as ShopItem[])
-    } else {
-      setItems(DEFAULT_ITEMS.map((item, i) => ({ ...item, id: `default-${i}`, created_at: new Date().toISOString() })))
-    }
-
-    if (user) {
-      const { data: userPurchases } = await supabase.from("purchases").select("*").eq("user_id", user.id)
-      if (userPurchases) setPurchases(userPurchases as Purchase[])
-    }
+    const { data: userPurchases } = await supabase
+      .from("purchases").select("*").eq("user_id", user.id)
+    if (userPurchases) setPurchases(userPurchases as Purchase[])
   }
 
   const handlePurchase = async (item: ShopItem) => {
@@ -81,11 +66,18 @@ export function CompactShopPanel() {
 
       const newPoints = user.points - item.price
       await supabase.from("profiles").update({ points: newPoints }).eq("id", user.id)
-      await supabase.from("point_logs").insert({ user_id: user.id, amount: -item.price, reason: `상점 구매: ${item.name}` })
+      if (item.price > 0) {
+        await supabase.from("point_logs").insert({
+          user_id: user.id, amount: -item.price, reason: `상점 구매: ${item.name}`,
+        })
+      }
 
       setUser({ ...user, points: newPoints })
-      setPurchases((prev) => [...prev, { id: crypto.randomUUID(), user_id: user.id, item_id: item.id, purchased_at: new Date().toISOString() }])
-      toast.success(`${item.name} 구매 완료!`)
+      setPurchases(prev => [...prev, {
+        id: crypto.randomUUID(), user_id: user.id, item_id: item.id,
+        purchased_at: new Date().toISOString(),
+      }])
+      toast.success(`${item.name} ${item.price === 0 ? "획득" : "구매"} 완료!`)
     } catch {
       toast.error("구매에 실패했습니다.")
     } finally {
@@ -93,83 +85,88 @@ export function CompactShopPanel() {
     }
   }
 
-  const isOwned = (itemId: string) => purchases.some((p) => p.item_id === itemId)
-  const bodyItems = items.filter((i) => i.category === "body")
-  const accessoryItems = items.filter((i) => i.category === "accessory")
+  const isOwned = (itemId: string) => purchases.some(p => p.item_id === itemId)
 
   return (
     <div className="p-3 space-y-3">
-      {/* 보유 포인트 */}
-      <div className="flex items-center justify-center gap-1 rounded-lg bg-primary/10 py-1.5">
-        <Star className="h-4 w-4 text-primary" />
-        <span className="text-sm font-semibold text-primary">{user?.points ?? 0}P</span>
+      {/* 헤더: 자판기 타이틀 + 보유 포인트 */}
+      <div className="flex items-center justify-between rounded-lg bg-primary/10 px-3 py-2">
+        <span className="text-sm font-bold">🎰 자판기</span>
+        <span className="flex items-center gap-1 text-sm font-semibold text-primary">
+          <Star className="h-3.5 w-3.5" />
+          {user?.points ?? 0}P
+        </span>
       </div>
 
-      <Tabs defaultValue="body">
-        <TabsList className="w-full h-7">
-          <TabsTrigger value="body" className="flex-1 text-xs h-6">
-            <Sparkles className="mr-1 h-3 w-3" />아바타
-          </TabsTrigger>
-          <TabsTrigger value="accessory" className="flex-1 text-xs h-6">
-            <ShoppingBag className="mr-1 h-3 w-3" />악세서리
-          </TabsTrigger>
+      {/* 5개 탭 */}
+      <Tabs defaultValue="hair">
+        <TabsList className="grid w-full grid-cols-5 h-7">
+          {SLOT_TABS.map(tab => (
+            <TabsTrigger key={tab.key} value={tab.key} className="text-[10px] h-6 px-1">
+              {tab.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
-        <TabsContent value="body" className="mt-2">
-          <div className="grid grid-cols-2 gap-2">
-            {bodyItems.map((item) => (
-              <ShopItemCompact
-                key={item.id}
-                item={item}
-                owned={isOwned(item.id)}
-                isPurchasing={isPurchasing === item.id}
-                onPurchase={handlePurchase}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="accessory" className="mt-2">
-          <div className="grid grid-cols-2 gap-2">
-            {accessoryItems.map((item) => (
-              <ShopItemCompact
-                key={item.id}
-                item={item}
-                owned={isOwned(item.id)}
-                isPurchasing={isPurchasing === item.id}
-                onPurchase={handlePurchase}
-              />
-            ))}
-          </div>
-        </TabsContent>
+        {SLOT_TABS.map(tab => (
+          <TabsContent key={tab.key} value={tab.key} className="mt-2">
+            <div className="grid grid-cols-2 gap-2">
+              {items
+                .filter(i => i.category === tab.key)
+                .map(item => (
+                  <PartItemCard
+                    key={item.id}
+                    item={item}
+                    owned={isOwned(item.id)}
+                    isPurchasing={isPurchasing === item.id}
+                    onPurchase={handlePurchase}
+                  />
+                ))}
+            </div>
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   )
 }
 
-function ShopItemCompact({
+function PartItemCard({
   item, owned, isPurchasing, onPurchase,
 }: {
-  item: ShopItem; owned: boolean; isPurchasing: boolean; onPurchase: (item: ShopItem) => void
+  item: ShopItem
+  owned: boolean
+  isPurchasing: boolean
+  onPurchase: (item: ShopItem) => void
 }) {
+  const slot = item.category as "hair" | "face" | "top" | "bottom" | "shoes"
+
   return (
     <div className={`rounded-lg border p-2 ${owned ? "border-primary/30 bg-primary/5" : "hover:bg-accent/50"}`}>
-      <div className={`mb-2 flex h-14 items-center justify-center rounded ${ITEM_COLORS[item.image_key] ?? "bg-muted"}`}>
-        <span className="text-2xl">{ITEM_EMOJI[item.image_key] ?? "🎁"}</span>
+      {/* 파츠 미리보기 캔버스 */}
+      <div className="mb-1 flex items-center justify-center">
+        <PartIcon slot={slot} imageKey={item.image_key} size={44} />
       </div>
+
       <div className="space-y-1">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-1">
           <p className="text-xs font-medium truncate">{item.name}</p>
-          {owned && <Check className="h-3 w-3 text-primary" />}
+          {owned && <Check className="h-3 w-3 flex-shrink-0 text-primary" />}
         </div>
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-0.5 text-xs">
+          <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
             <Star className="h-3 w-3 text-amber-500" />
             {item.price === 0 ? "무료" : `${item.price}P`}
           </span>
-          {!owned && (
-            <Button size="sm" className="h-5 text-[10px] px-2" onClick={() => onPurchase(item)} disabled={isPurchasing}>
-              구매
+          {owned ? (
+            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4">보유</Badge>
+          ) : (
+            <Button
+              size="sm"
+              className="h-5 text-[10px] px-2"
+              onClick={() => onPurchase(item)}
+              disabled={isPurchasing}
+            >
+              {item.price === 0 ? "받기" : "구매"}
             </Button>
           )}
         </div>

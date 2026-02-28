@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Users, Star, Trash2, Plus, Minus, Copy, Check, BookOpen } from "lucide-react"
 import { toast } from "sonner"
 import { CompactNotionPanel } from "@/components/panels/compact-notion-panel"
+import { MiniAvatar } from "@/components/avatar/mini-avatar"
 import type { Profile } from "@/types/database"
 
 export function CompactAdminPanel() {
@@ -147,8 +148,15 @@ export function CompactAdminPanel() {
         <TabsContent value="members" className="mt-2 space-y-1.5">
           {members.map((member) => (
             <div key={member.id} className="flex items-center gap-2 rounded-lg border p-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                {member.nickname.charAt(0).toUpperCase()}
+              <div className="flex items-end justify-center h-[28px] w-[28px] rounded-md border border-background overflow-hidden bg-muted/30 shrink-0">
+                <MiniAvatar
+                  hairKey={member.avatar_hair ?? "hair_default"}
+                  faceKey={member.avatar_face ?? "face_default"}
+                  topKey={member.avatar_top ?? "top_default"}
+                  bottomKey={member.avatar_bottom ?? "bottom_default"}
+                  shoesKey={member.avatar_shoes ?? "shoes_default"}
+                  size={28}
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">
@@ -176,6 +184,16 @@ export function CompactAdminPanel() {
         <TabsContent value="points" className="mt-2 space-y-1.5">
           {members.map((member) => (
             <div key={member.id} className="flex items-center gap-2 rounded-lg border p-2">
+              <div className="flex items-end justify-center h-[28px] w-[28px] rounded-md border border-background overflow-hidden bg-muted/30 shrink-0">
+                <MiniAvatar
+                  hairKey={member.avatar_hair ?? "hair_default"}
+                  faceKey={member.avatar_face ?? "face_default"}
+                  topKey={member.avatar_top ?? "top_default"}
+                  bottomKey={member.avatar_bottom ?? "bottom_default"}
+                  shoesKey={member.avatar_shoes ?? "shoes_default"}
+                  size={28}
+                />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium truncate">{member.nickname}</p>
                 <p className="text-[10px] text-muted-foreground">
