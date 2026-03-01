@@ -9,6 +9,7 @@ export type PanelType =
   | "settings"
   | "admin"
   | "notifications"
+  | "roulette"
 
 interface PanelState {
   activePanel: PanelType | null

@@ -6,6 +6,57 @@
 
 ---
 
+## [0.4.0-roulette] - 2026-03-01
+
+### Added
+- 룰렛 게이미피케이션 기능 구현 (포인트 소비형)
+  - 가상 사무실 룰렛 오브젝트 (5,1) 배치 (Canvas drawObj "roulette" case)
+  - 6가지 보상 체계: 꽝(35%), 한번 더(30%), 150P(15%), 300P(10%), 500P(5%), 커피이용권(5%)
+  - 스핀 비용: 100P / 기댓값: 77.5P (하우스 엣지 22.5%)
+  - 연속 무료 재스핀 (free_spin 결과 시 1초 후 자동 재스핀, 무한 연속 가능)
+
+- 룰렛 패널 UI (`compact-roulette-panel.tsx`)
+  - Canvas API 기반 룰렛 휠 (Electron/Chromium 완전 호환)
+  - 세그먼트 라벨, 보상 확률 테이블, 최근 스핀 히스토리 5건 표시
+  - 연속 무료 스핀 카운터 표시
+
+- 커피이용권 어드민 알림
+  - PostgreSQL 트리거 `on_roulette_coffee_voucher` 자동 어드민 알림 발송
+  - 기존 `NotificationProvider` 재활용으로 신규 인프라 없이 실시간 수신
+  - `NotificationType`에 `"roulette_voucher"` 추가
+
+- `src/lib/roulette/logic.ts`
+  - `ROULETTE_SEGMENTS` 확률 배열 (startDeg, degree 기반)
+  - `spinRoulette()`: 누적 확률 랜덤 결과 반환
+  - `getLandingRotation()`: 세그먼트 중앙각 기반 랜딩 회전량 계산
+
+### Changed
+- `src/types/database.ts`: `RouletteResult` 유니온 타입, `RouletteLog` 인터페이스 추가
+- `src/stores/panel-store.ts`: `PanelType`에 `"roulette"` 추가
+- `src/components/office/virtual-office.tsx`: `ObjType`, `OBJS`, `drawObj` 확장
+- `src/app/(main)/page.tsx`: 룰렛 패널 렌더링 케이스 추가
+- `src/components/layout/title-bar.tsx`: `PANEL_TITLES`에 `"roulette"` 추가
+
+### Fixed
+- `point_logs` INSERT 누락 — 룰렛 스핀 시 차감(-100P)과 보상(+gainedP) 기록 추가
+- conic-gradient Electron 비호환 → Canvas API (ctx.arc) 전면 교체
+- 포인터(▼) overflow 잘림 버그 수정
+- Tailwind v4 `left-1/2` 클래스 미생성 버그 → 인라인 스타일로 우회
+
+### Database
+- `supabase/migration_roulette.sql`: `roulette_logs` 테이블 + RLS 2개 + 트리거 1개
+  - 테이블: id, user_id, result, points_spent, points_gained, is_free_spin, spin_chain, created_at
+  - SECURITY DEFINER 트리거로 RLS 우회 (어드민 알림 INSERT)
+  - `v_team_id IS NOT NULL` 방어 코드 추가
+
+### Quality Metrics
+- 초기 Match Rate: 87.0% (119항목)
+- 수정 후 추정 Match Rate: 97%+
+- 기능적 Match Rate (시각적 항목 제외): 89.4% → 99%+
+- PDCA 사이클: #8
+
+---
+
 ## [0.3.0-notification] - 2026-02-28
 
 ### Added

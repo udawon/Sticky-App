@@ -99,7 +99,29 @@ export type NotificationType =
   | "task_assigned"   // 과제 생성 시 담당자 지정
   | "assignee_added"  // 기존 과제 담당자 추가
   | "comment_added"   // 담당 과제에 메모 생성
+  | "roulette_voucher" // 룰렛 커피이용권 당첨 (어드민 알림)
   | "general"         // 기타 수동 알람
+
+// 룰렛 결과 타입
+export type RouletteResult =
+  | "nothing"
+  | "free_spin"
+  | "points_150"
+  | "points_300"
+  | "points_500"
+  | "coffee_voucher"
+
+// 룰렛 스핀 기록
+export interface RouletteLog {
+  id: string
+  user_id: string
+  result: RouletteResult
+  points_spent: number
+  points_gained: number
+  is_free_spin: boolean
+  spin_chain: number
+  created_at: string
+}
 
 // 알림
 export interface Notification {

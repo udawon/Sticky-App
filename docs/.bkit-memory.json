@@ -1,12 +1,13 @@
 {
-  "sessionCount": 35,
+  "sessionCount": 46,
   "lastSession": {
-    "startedAt": "2026-02-28T11:22:32.100Z",
+    "startedAt": "2026-03-01T01:14:05.723Z",
     "platform": "claude",
     "level": "Dynamic"
   },
-  "currentFeature": "notion-export",
-  "phase": "completed",
-  "matchRate": 100,
-  "updatedAt": "2026-02-28T00:00:00.000Z"
+  "currentFeature": "roulette",
+  "phase": "archived",
+  "matchRate": 97,
+  "archivedTo": "docs/archive/2026-03/roulette/",
+  "updatedAt": "2026-03-01T00:00:00.000Z"
 }

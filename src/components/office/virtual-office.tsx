@@ -64,7 +64,7 @@ const P = {
 // ─── 오브젝트 ───
 type ObjType =
   | "wall" | "chalkboard" | "trophy_case" | "mirror"
-  | "printer" | "vending" | "admin_desk"
+  | "printer" | "vending" | "admin_desk" | "roulette"
   | "plant" | "desk" | "bookshelf" | "sofa" | "water_cooler" | "chair"
 
 interface MapObj {
@@ -105,6 +105,9 @@ const OBJS: MapObj[] = [
   { x: 3, y: 13, w: 1, h: 1, type: "chair", variant: 2 },
   { x: 7, y: 13, w: 1, h: 1, type: "desk", variant: 0 },
   { x: 8, y: 13, w: 1, h: 1, type: "chair", variant: 0 },
+
+  // ── 룰렛 머신 (과제보드 4칸 위: 5,1) ──
+  { x: 5, y: 1, w: 2, h: 1, type: "roulette", label: "🎰 룰렛", interactable: true, panelType: "roulette" },
 
   // ── 상단 벽 장식 ──
   { x: 1, y: 1, w: 1, h: 1, type: "plant", variant: 0 },
@@ -896,6 +899,61 @@ function drawObj(c: CanvasRenderingContext2D, o: MapObj, role?: string) {
       c.fillRect(x + 3, y + 11, 7, 2)
       c.fillStyle = P.charcoal
       c.fillRect(x + 4, y + 11, 5, 1)
+      break
+    }
+
+    case "roulette": {
+      // 룰렛 머신 (2블럭 너비)
+      // 본체 (퍼플 프레임)
+      c.fillStyle = "#5b21b6"
+      c.fillRect(x + 1, y + 1, w - 2, 13)
+      c.fillStyle = "#4c1d95"
+      c.fillRect(x + 1, y + 13, w - 2, 1)
+      // 상단 간판
+      c.fillStyle = "#ede9fe"
+      c.fillRect(x + 2, y + 1, w - 4, 2)
+      c.fillStyle = P.gold
+      c.fillRect(x + 4, y + 1, w - 8, 1)
+      // 룰렛 원판 (가운데, 6색 세그먼트)
+      const cx = x + w / 2
+      const cy = y + 7
+      const r = 4
+      const segColors = ["#6b7280", "#10b981", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444"]
+      const segDeg = [126, 108, 54, 36, 18, 18]
+      let startAngle = -Math.PI / 2
+      segDeg.forEach((deg, i) => {
+        const endAngle = startAngle + (deg * Math.PI) / 180
+        c.beginPath()
+        c.moveTo(cx, cy)
+        c.arc(cx, cy, r, startAngle, endAngle)
+        c.closePath()
+        c.fillStyle = segColors[i]
+        c.fill()
+        startAngle = endAngle
+      })
+      // 원판 테두리
+      c.beginPath()
+      c.arc(cx, cy, r, 0, Math.PI * 2)
+      c.strokeStyle = P.gold
+      c.lineWidth = 1
+      c.stroke()
+      // 포인터 (상단 삼각형)
+      c.fillStyle = P.gold
+      c.fillRect(cx - 1, cy - r - 2, 2, 2)
+      // 버튼 (하단)
+      c.fillStyle = P.gold
+      c.fillRect(x + w / 2 - 2, y + 12, 4, 2)
+      c.fillStyle = P.goldDk
+      c.fillRect(x + w / 2 - 2, y + 13, 4, 1)
+      // LED 장식 (좌우)
+      const ledX = [x + 2, x + w - 3]
+      ledX.forEach(lx => {
+        c.fillStyle = P.gold; c.fillRect(lx, y + 3, 1, 1)
+        c.fillStyle = "#ef4444"; c.fillRect(lx, y + 5, 1, 1)
+        c.fillStyle = "#10b981"; c.fillRect(lx, y + 7, 1, 1)
+        c.fillStyle = "#3b82f6"; c.fillRect(lx, y + 9, 1, 1)
+        c.fillStyle = P.gold; c.fillRect(lx, y + 11, 1, 1)
+      })
       break
     }
 

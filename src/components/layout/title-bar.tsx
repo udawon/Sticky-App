@@ -15,6 +15,7 @@ const PANEL_TITLES: Record<string, string> = {
   settings: "설정",
   admin: "관리자",
   notifications: "알림",
+  roulette: "🎰 룰렛",
 }
 
 // Electron API 타입 (preload.js에서 주입)

@@ -14,6 +14,7 @@ import { CompactMypagePanel } from "@/components/panels/compact-mypage-panel"
 import { CompactSettingsPanel } from "@/components/panels/compact-settings-panel"
 import { CompactAdminPanel } from "@/components/panels/compact-admin-panel"
 import { CompactNotificationsPanel } from "@/components/panels/compact-notifications-panel"
+import { CompactRoulettePanel } from "@/components/panels/compact-roulette-panel"
 
 // Canvas는 SSR 불가
 const VirtualOffice = dynamic(
@@ -41,6 +42,7 @@ function PanelContent() {
     case "settings": return <CompactSettingsPanel />
     case "admin": return <CompactAdminPanel />
     case "notifications": return <CompactNotificationsPanel />
+    case "roulette": return <CompactRoulettePanel />
     default: return null
   }
 }
