@@ -6,6 +6,51 @@
 
 ---
 
+## [0.5.0-demo] - 2026-03-01
+
+### Added
+- 데모 역할 선택 다이얼로그 (Vercel 배포용)
+  - 방문자가 "팀원" 또는 "팀 리더(어드민)" 중 선택 가능
+  - 데모 계정 2개 자동 로그인 (demo@sticky.app, admin@demo.com)
+  - shadcn/ui Dialog + Crown/Users 아이콘
+
+- 데모 모드 제어 시스템
+  - `src/lib/demo.ts` — isDemoAccount() 유틸리티
+  - `src/hooks/use-demo-mode.ts` — useDemo() 훅
+  - 파괴적 액션 3가지 차단: 멤버 제거, 포인트 차감, 과제 삭제
+
+- 데모 배지 표시
+  - TitleBar에 노란색 "데모" Badge (양쪽 계정 모두)
+  - 사용자에게 시연 중임을 명확히 알림
+
+- 한국어 조사 자동 판별
+  - `getKoreanParticle()` 함수 (받침 여부 감지)
+  - "이/가", "을/를" 자동 선택으로 자연스러운 토스트 메시지
+
+### Changed
+- `.env.local.example`: NEXT_PUBLIC_DEMO_* 환경 변수 4개 추가
+  - NEXT_PUBLIC_DEMO_ADMIN_EMAIL
+  - NEXT_PUBLIC_DEMO_ADMIN_PASSWORD
+  - NEXT_PUBLIC_DEMO_MEMBER_EMAIL
+  - NEXT_PUBLIC_DEMO_MEMBER_PASSWORD
+- Vercel 배포 최적화: .vercelignore 생성
+
+### Database
+- `supabase/seed_demo.sql`: 데모 계정 2개 + 팀 생성 스크립트 (수동 실행)
+
+### Testing
+- Playwright MCP 검증: 7/7 PASS (100% Match Rate)
+  - 역할 선택 Dialog 표시 검증
+  - 팀원/어드민 로그인 검증
+  - 파괴적 액션 차단 검증
+  - 토스트 메시지 한국어 조사 검증
+
+### PDCA Cycle
+- PDCA #10 완료: demo-role-select
+- 보고서: `docs/04-report/features/demo-role-select.report.md`
+
+---
+
 ## [0.4.0-roulette] - 2026-03-01
 
 ### Added
