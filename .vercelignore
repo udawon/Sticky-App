@@ -1,0 +1,5 @@
+node_modules
+.next
+electron
+out
+coverage
