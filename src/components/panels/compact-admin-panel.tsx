@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useAuthStore } from "@/stores/auth-store"
+import { useDemoMode } from "@/hooks/use-demo-mode"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,6 +25,7 @@ import type { Profile } from "@/types/database"
 
 export function CompactAdminPanel() {
   const { user } = useAuthStore()
+  const { blockAction } = useDemoMode()
   const [members, setMembers] = useState<Profile[]>([])
   const [pointDialogOpen, setPointDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null)
@@ -69,6 +71,7 @@ export function CompactAdminPanel() {
   }, [user?.team_id])
 
   const handleRemoveMember = async (memberId: string) => {
+    if (blockAction("멤버 제거")) return
     if (memberId === user?.id) { toast.error("자신은 추방 불가"); return }
     if (!confirm("정말 이 팀원을 제거하시겠습니까?")) return
 
@@ -83,6 +86,7 @@ export function CompactAdminPanel() {
   }
 
   const handlePointAction = async (isAdd: boolean) => {
+    if (!isAdd && blockAction("포인트 차감")) return
     if (!selectedMember || !pointAmount || !pointReason) return
     const amount = parseInt(pointAmount) * (isAdd ? 1 : -1)
     const supabase = createClient()

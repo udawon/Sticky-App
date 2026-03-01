@@ -3,7 +3,9 @@
 import { useAuthStore } from "@/stores/auth-store"
 import { usePanelStore } from "@/stores/panel-store"
 import { useNotificationStore } from "@/stores/notification-store"
+import { useDemoMode } from "@/hooks/use-demo-mode"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Bell, LogOut, Users, X } from "lucide-react"
 
 // 패널별 제목 매핑
@@ -38,6 +40,7 @@ export function TitleBar({ onlineCount = 1 }: TitleBarProps) {
   const { user } = useAuthStore()
   const { activePanel, closePanel, openPanel } = usePanelStore()
   const { unreadCount } = useNotificationStore()
+  const { isDemo } = useDemoMode()
 
   const handleLogout = async () => {
     useAuthStore.getState().setUser(null)
@@ -69,6 +72,11 @@ export function TitleBar({ onlineCount = 1 }: TitleBarProps) {
           <span className="flex items-center gap-1 px-1 text-sm font-semibold select-none">
             <span>📌</span>
             <span>Sticky</span>
+            {isDemo && (
+              <Badge variant="outline" className="h-4 text-[9px] px-1 py-0 border-yellow-400 text-yellow-600 dark:text-yellow-400 font-semibold">
+                데모
+              </Badge>
+            )}
           </span>
         )}
         {activePanel && (

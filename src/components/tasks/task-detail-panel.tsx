@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useAuthStore } from "@/stores/auth-store"
 import { useTaskStore } from "@/stores/task-store"
+import { useDemoMode } from "@/hooks/use-demo-mode"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -65,6 +66,7 @@ export function TaskDetailPanel({
   onBack,
 }: TaskDetailPanelProps) {
   const { user } = useAuthStore()
+  const { blockAction } = useDemoMode()
   const task = useTaskStore((s) => s.tasks.find((t) => t.id === taskId))
   const { updateTask, removeTask } = useTaskStore()
 
@@ -222,6 +224,7 @@ export function TaskDetailPanel({
   }
 
   const handleDelete = async () => {
+    if (blockAction("과제 삭제")) return
     if (!confirm("정말로 이 과제를 삭제하시겠습니까?")) return
     const supabase = createClient()
     const { error } = await supabase.from("tasks").delete().eq("id", taskId)
