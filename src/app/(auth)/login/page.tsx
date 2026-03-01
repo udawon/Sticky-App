@@ -152,7 +152,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-lg">Claude Sticky</CardTitle>
           <CardDescription className="text-xs">
-            팀 협업 & 게이미피케이션
+            Virtual Office with Team
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
