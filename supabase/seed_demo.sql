@@ -27,22 +27,26 @@ BEGIN
   DELETE FROM auth.users WHERE email IN ('admin@demo.com', 'demo@sticky.app');
 
   -- ─── 어드민 계정 생성 ───
+  -- 주의: email_change 등 문자열 컬럼은 NULL 대신 '' 필수 (GoTrue Go 드라이버 호환)
   INSERT INTO auth.users (
     instance_id, id, aud, role, email,
     encrypted_password, email_confirmed_at,
     created_at, updated_at,
     raw_app_meta_data, raw_user_meta_data,
-    is_super_admin, confirmation_token, recovery_token
+    is_super_admin, confirmation_token, recovery_token,
+    email_change, email_change_token_new, email_change_token_current,
+    reauthentication_token, email_change_confirm_status
   ) VALUES (
     '00000000-0000-0000-0000-000000000000',
     v_admin_id,
     'authenticated', 'authenticated',
     'admin@demo.com',
-    crypt('Demo1234!', gen_salt('bf')),
+    crypt('Demo1234!', gen_salt('bf', 10)),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nickname":"데모 팀장","role":"admin"}',
-    FALSE, '', ''
+    FALSE, '', '',
+    '', '', '', '', 0
   );
 
   -- ─── 데모 멤버 계정 생성 ───
@@ -51,18 +55,40 @@ BEGIN
     encrypted_password, email_confirmed_at,
     created_at, updated_at,
     raw_app_meta_data, raw_user_meta_data,
-    is_super_admin, confirmation_token, recovery_token
+    is_super_admin, confirmation_token, recovery_token,
+    email_change, email_change_token_new, email_change_token_current,
+    reauthentication_token, email_change_confirm_status
   ) VALUES (
     '00000000-0000-0000-0000-000000000000',
     v_demo_id,
     'authenticated', 'authenticated',
     'demo@sticky.app',
-    crypt('DemoSticky2026!', gen_salt('bf')),
+    crypt('DemoSticky2026!', gen_salt('bf', 10)),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nickname":"체험 사용자","role":"member"}',
-    FALSE, '', ''
+    FALSE, '', '',
+    '', '', '', '', 0
   );
+
+  -- ─── auth.identities 생성 (이메일 로그인 활성화) ───
+  INSERT INTO auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+  VALUES
+    (
+      v_admin_id::text,
+      v_admin_id,
+      jsonb_build_object('sub', v_admin_id::text, 'email', 'admin@demo.com'),
+      'email',
+      NOW(), NOW(), NOW()
+    ),
+    (
+      v_demo_id::text,
+      v_demo_id,
+      jsonb_build_object('sub', v_demo_id::text, 'email', 'demo@sticky.app'),
+      'email',
+      NOW(), NOW(), NOW()
+    )
+  ON CONFLICT DO NOTHING;
 
   -- ─── 팀 생성 ───
   INSERT INTO teams (name, invite_code, created_by)
