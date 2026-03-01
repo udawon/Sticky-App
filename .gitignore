@@ -49,3 +49,10 @@ next-env.d.ts
 
 # Claude 로컬 설정 (민감 정보 포함 가능)
 .claude/settings.local.json
+.claude/plans/
+.claude/todos/
+
+# Windows 특수 파일
+NUL
+
+.vercel

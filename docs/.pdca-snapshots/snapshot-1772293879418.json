@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-28T06:33:45.620Z",
+  "timestamp": "2026-02-28T15:51:19.416Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-02-28T06:29:26.726Z",
+    "lastUpdated": "2026-02-28T15:49:14.902Z",
     "activeFeatures": [
       "notification",
       ".claude",
@@ -23,7 +23,10 @@
       "logout",
       "electron",
       "(main)",
-      "open"
+      "open",
+      "export",
+      "office",
+      "avatar"
     ],
     "primaryFeature": "notification",
     "features": {
@@ -96,9 +99,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-26T23:13:39.493Z",
-          "lastUpdated": "2026-02-28T06:29:26.726Z"
+          "lastUpdated": "2026-02-28T11:49:25.756Z"
         },
-        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\providers\\notification-provider.tsx"
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\providers\\auth-provider.tsx"
       },
       "tasks": {
         "phase": "do",
@@ -109,9 +112,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-26T23:14:33.273Z",
-          "lastUpdated": "2026-02-27T14:46:15.541Z"
+          "lastUpdated": "2026-02-28T15:45:10.118Z"
         },
-        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\tasks\\task-detail-panel.tsx"
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\tasks\\task-filter-bar.tsx"
       },
       "panels": {
         "phase": "do",
@@ -122,9 +125,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-26T23:15:44.177Z",
-          "lastUpdated": "2026-02-27T14:46:03.811Z"
+          "lastUpdated": "2026-02-28T15:49:14.902Z"
         },
-        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\panels\\compact-tasks-panel.tsx"
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\panels\\compact-admin-panel.tsx"
       },
       "signup": {
         "phase": "do",
@@ -148,9 +151,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-26T23:29:35.899Z",
-          "lastUpdated": "2026-02-28T06:16:33.257Z"
+          "lastUpdated": "2026-02-28T07:09:04.337Z"
         },
-        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\layout\\title-bar.tsx"
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\layout\\panel-overlay.tsx"
       },
       "login": {
         "phase": "do",
@@ -200,7 +203,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-27T00:54:11.194Z",
-          "lastUpdated": "2026-02-28T04:47:18.077Z"
+          "lastUpdated": "2026-02-28T11:44:35.651Z"
         },
         "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\types\\database.ts"
       },
@@ -213,7 +216,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-27T00:54:20.296Z",
-          "lastUpdated": "2026-02-27T00:58:32.633Z"
+          "lastUpdated": "2026-02-28T08:59:14.249Z"
         },
         "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\lib\\notion\\mapper.ts"
       },
@@ -308,6 +311,45 @@
           "lastUpdated": "2026-02-28T06:05:28.374Z"
         },
         "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\open\\page.tsx"
+      },
+      "export": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-28T07:23:46.754Z",
+          "lastUpdated": "2026-02-28T11:03:03.138Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\api\\notion\\export\\route.ts"
+      },
+      "office": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-28T11:10:15.920Z",
+          "lastUpdated": "2026-02-28T15:15:13.840Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\office\\virtual-office.tsx"
+      },
+      "avatar": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-28T14:46:32.725Z",
+          "lastUpdated": "2026-02-28T15:23:18.998Z"
+        },
+        "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\avatar\\mini-avatar.tsx"
       }
     },
     "pipeline": {
@@ -318,7 +360,7 @@
     "session": {
       "startedAt": "2026-02-26T14:29:38.206Z",
       "onboardingCompleted": false,
-      "lastActivity": "2026-02-28T06:29:26.726Z"
+      "lastActivity": "2026-02-28T15:49:14.902Z"
     },
     "history": [
       {
@@ -1170,6 +1212,600 @@
       {
         "timestamp": "2026-02-28T06:29:26.726Z",
         "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:07:15.665Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:09:04.337Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:11:43.590Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:17:04.644Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:23:12.185Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:23:18.083Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:23:27.790Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:23:46.754Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:24:56.463Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:32:52.508Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T07:32:55.959Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:15:39.632Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:16:13.075Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:45:36.786Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:45:41.325Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:56:04.813Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:56:30.197Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:56:35.628Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:56:40.542Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:58:57.402Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:59:05.557Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:59:10.133Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T08:59:14.249Z",
+        "feature": "notion",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T10:59:39.280Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T10:59:42.675Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:01:42.804Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:02:59.358Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:03:03.138Z",
+        "feature": "export",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:09:51.476Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:10:10.273Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:10:15.920Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:10:21.129Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:10:58.872Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:14:32.606Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:14:36.149Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:14:42.330Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:44:32.567Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:44:35.651Z",
+        "feature": "claude-sticky",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:44:49.790Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:45:08.466Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:45:18.663Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:45:26.447Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:46:02.273Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:47:02.870Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:49:19.629Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T11:49:25.756Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:43:26.502Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:43:37.545Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:43:41.591Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:44:08.634Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:44:15.368Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:44:26.341Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:44:56.198Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T12:45:04.272Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:19:50.551Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:20:13.860Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:20:37.798Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:20:51.771Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:21:19.236Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:46:32.725Z",
+        "feature": "avatar",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:46:53.225Z",
+        "feature": "avatar",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:47:14.093Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:47:41.324Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:47:50.789Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:47:58.920Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:48:11.606Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:48:23.008Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:48:34.026Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:48:51.388Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:49:05.935Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:49:16.035Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:49:25.493Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:49:31.636Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T14:49:40.332Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:02:40.524Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:03:27.620Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:04:06.256Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:11:11.862Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:11:23.449Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:13:28.307Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:15:13.841Z",
+        "feature": "office",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:21:32.845Z",
+        "feature": "avatar",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:23:06.165Z",
+        "feature": "avatar",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:23:18.998Z",
+        "feature": "avatar",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:32:42.804Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:32:53.553Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:34:33.580Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:34:37.926Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:36:28.026Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:38:11.529Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:41:35.295Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:43:42.042Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:43:46.847Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:45:10.118Z",
+        "feature": "tasks",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:46:30.455Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:46:37.704Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:48:58.397Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:49:07.647Z",
+        "feature": "panels",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-28T15:49:14.902Z",
+        "feature": "panels",
         "phase": "do",
         "action": "updated"
       }

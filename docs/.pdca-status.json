@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-01T00:41:57.787Z",
+  "lastUpdated": "2026-03-01T04:23:02.777Z",
   "activeFeatures": [
     "notification",
     ".claude",
@@ -110,9 +110,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-26T23:14:33.273Z",
-        "lastUpdated": "2026-02-28T15:45:10.118Z"
+        "lastUpdated": "2026-03-01T03:41:24.756Z"
       },
-      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\tasks\\task-filter-bar.tsx"
+      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\tasks\\task-detail-panel.tsx"
     },
     "panels": {
       "phase": "do",
@@ -123,9 +123,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-26T23:15:44.177Z",
-        "lastUpdated": "2026-03-01T00:41:57.787Z"
+        "lastUpdated": "2026-03-01T03:41:02.389Z"
       },
-      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\panels\\compact-roulette-panel.tsx"
+      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\panels\\compact-admin-panel.tsx"
     },
     "signup": {
       "phase": "do",
@@ -149,7 +149,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-26T23:29:35.899Z",
-        "lastUpdated": "2026-02-28T16:16:29.860Z"
+        "lastUpdated": "2026-03-01T03:40:22.291Z"
       },
       "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\components\\layout\\title-bar.tsx"
     },
@@ -162,7 +162,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-27T00:37:35.167Z",
-        "lastUpdated": "2026-02-27T03:44:12.616Z"
+        "lastUpdated": "2026-03-01T03:39:53.517Z"
       },
       "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\app\\(auth)\\login\\page.tsx"
     },
@@ -201,9 +201,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-27T00:54:11.194Z",
-        "lastUpdated": "2026-02-28T16:14:44.282Z"
+        "lastUpdated": "2026-03-01T04:23:02.777Z"
       },
-      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\types\\database.ts"
+      "lastFile": "C:\\Users\\udawon\\claude-sticky\\src\\hooks\\use-demo-mode.ts"
     },
     "notion": {
       "phase": "do",
@@ -373,7 +373,7 @@
   "session": {
     "startedAt": "2026-02-26T14:29:38.206Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-01T00:41:57.787Z"
+    "lastActivity": "2026-03-01T04:23:02.777Z"
   },
   "history": [
     {
@@ -1915,6 +1915,108 @@
     {
       "timestamp": "2026-03-01T00:41:57.787Z",
       "feature": "panels",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T02:42:35.104Z",
+      "feature": "claude-sticky",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T02:42:41.290Z",
+      "feature": "login",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T02:42:49.795Z",
+      "feature": "login",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:39:13.215Z",
+      "feature": "claude-sticky",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:39:20.058Z",
+      "feature": "claude-sticky",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:39:53.517Z",
+      "feature": "login",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:08.250Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:13.480Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:22.291Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:29.764Z",
+      "feature": "panels",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:37.448Z",
+      "feature": "panels",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:40:42.896Z",
+      "feature": "panels",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:41:02.389Z",
+      "feature": "panels",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:41:15.163Z",
+      "feature": "tasks",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:41:19.882Z",
+      "feature": "tasks",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T03:41:24.756Z",
+      "feature": "tasks",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-01T04:23:02.777Z",
+      "feature": "claude-sticky",
       "phase": "do",
       "action": "updated"
     }
