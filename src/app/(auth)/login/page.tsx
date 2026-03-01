@@ -32,7 +32,7 @@ const DEMO_ADMIN_PASSWORD = process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD
 const isDemoEnabled = !!(DEMO_EMAIL && DEMO_PASSWORD)
 
 const APP_WIDTH = 360
-const APP_HEIGHT = 580
+const APP_HEIGHT = 720  // 브라우저 크롬(주소창+타이틀바) 높이 보정 증가
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -132,7 +132,7 @@ export default function LoginPage() {
         <div className="text-center space-y-2">
           <p className="text-4xl">📌</p>
           <h1 className="text-2xl font-bold text-white">Claude Sticky</h1>
-          <p className="text-sm text-slate-400">팀 협업 · 가상 사무실 · 게이미피케이션</p>
+          <p className="text-sm text-slate-400">Virtual Office with Team</p>
         </div>
         <Button size="lg" onClick={handleLaunch} className="gap-2 px-8">
           <ExternalLink className="h-4 w-4" />

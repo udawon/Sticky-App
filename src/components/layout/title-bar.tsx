@@ -43,8 +43,8 @@ export function TitleBar({ onlineCount = 1 }: TitleBarProps) {
   const { isDemo } = useDemoMode()
 
   const handleLogout = async () => {
-    useAuthStore.getState().setUser(null)
-    usePanelStore.getState().closePanel()
+    // setUser(null)을 먼저 호출하면 팀 없음 화면이 깜빡이므로 제거
+    // 페이지 이동 후 세션이 없으면 auth-provider가 자동으로 초기화
     await fetch("/api/auth/logout", { method: "POST" })
     window.location.href = "/login"
   }
