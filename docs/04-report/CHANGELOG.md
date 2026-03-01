@@ -6,6 +6,70 @@
 
 ---
 
+## [0.6.0-launcher] - 2026-03-01
+
+### Added
+- 팝업 런처 (Popup Launcher) 기능
+  - 일반 브라우저 탭 접속 시 어플리케이션 소개 화면 표시
+  - 어두운 배경(bg-black/80) + "앱 실행하기" 버튼
+  - 런처 감지 로직: `window.opener !== null || window.outerWidth <= 420`
+  - `isPopup` 초기값 `true` (SSR 깜빡임 방지)
+
+- 팝업 창 크기 최적화
+  - 팝업 창 목표 크기: 360 × 720
+  - 브라우저 크롬 높이 동적 계산: `chromeHeight = outerHeight - innerHeight`
+  - 최종 크기: `resizeTo(360, 560 + chromeHeight)`
+
+### Changed
+- `src/app/(auth)/login/page.tsx`
+  - 팝업 런처 UI 추가 (어두운 배경 + 버튼)
+  - 텍스트 변경: 서브타이틀 "Virtual Office with Team" (이전: "팀 협업 · 가상 사무실 · 게이미피케이션")
+  - LogIn CardDescription: "Virtual Office with Team" (이전: "팀 협업 & 게이미피케이션")
+
+- `src/components/layout/title-bar.tsx`
+  - 로그아웃 버그 수정: `setUser(null)` 제거 (플래시 제거)
+  - 로그아웃 흐름: API → 쿠키 삭제 → 즉시 리다이렉트
+
+- `src/components/layout/compact-shell.tsx`
+  - 팝업 창 높이 동적 계산 추가
+  - `window.outerHeight - window.innerHeight` 활용으로 크롬 높이 보정
+
+- `src/components/office/virtual-office.tsx`
+  - 식물 위치 변경: (x:6, y:4) → (x:1, y:5) (좌측 벽 배치)
+  - 목표: 팀원 동선 방해 제거
+
+### Fixed
+- ✅ 팝업 창 높이 부족 버그 (크롬 높이 미반영)
+  - 증상: `window.resizeTo(360, 560)` 호출 시 실제 높이가 560px 미만
+  - 원인: innerHeight만 설정되고 크롬 높이(주소창, 탭 등) 미포함
+  - 해결: chromeHeight 동적 계산 후 추가
+
+- ✅ 로그아웃 후 "팀에 참가하세요" 화면 플래시
+  - 증상: 로그아웃 직후 팀 없음 화면 1초 이상 표시
+  - 원인: `setUser(null)` 즉시 실행 → 팀 없음 조건 충족 (쿠키 삭제는 지연)
+  - 해결: `setUser(null)` 제거 + API 응답 후 즉시 `window.location.href` 리다이렉트
+
+### Vercel Deployment
+- 런처 기능은 웹 브라우저(https://claude-sticky.vercel.app)에서만 작동
+- 팝업 창: 360×720 크기로 데스크탑 앱 경험 제공
+- 팝업 차단 정책: 브라우저 설정에 따라 차단될 수 있음
+
+### Testing
+- E2E 테스트 (Playwright): 8/8 PASS (100% Match Rate)
+  - 일반 탭: 런처 화면 표시 ✅
+  - 팝업 창: 로그인 폼 표시 ✅
+  - 팝업 감지: window.opener=true ✅
+  - 팝업 높이: 720px 달성 ✅
+  - 로그아웃: "팀에 참가하세요" 없음 ✅
+  - 텍스트: "Virtual Office with Team" 확인 ✅
+  - 식물 위치: (1, 5) 확인 ✅
+
+### PDCA Cycle
+- PDCA #11 완료: popup-launcher
+- 보고서: `docs/04-report/features/popup-launcher.report.md`
+
+---
+
 ## [0.5.0-demo] - 2026-03-01
 
 ### Added
