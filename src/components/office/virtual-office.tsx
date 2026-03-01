@@ -115,7 +115,7 @@ const OBJS: MapObj[] = [
   { x: 10, y: 1, w: 1, h: 1, type: "plant", variant: 1 },
 
   // ── 식물 (장식) ──
-  { x: 10, y: 3, w: 1, h: 1, type: "plant", variant: 1 },  // 과제보드 위 → 우측 최상단 식물(10,1) 2칸 밑으로 이동
+  { x: 1, y: 5, w: 1, h: 1, type: "plant", variant: 1 },
   { x: 10, y: 5, w: 1, h: 1, type: "plant", variant: 0 },
   { x: 1, y: 12, w: 1, h: 1, type: "plant", variant: 1 },
   { x: 10, y: 12, w: 1, h: 1, type: "plant", variant: 0 },
