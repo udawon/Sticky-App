@@ -17,10 +17,34 @@ import {
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
+const DEMO_EMAIL = process.env.NEXT_PUBLIC_DEMO_EMAIL
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD
+
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  const handleDemoLogin = async () => {
+    if (!DEMO_EMAIL || !DEMO_PASSWORD) return
+    setIsLoading(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithPassword({
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
+      })
+      if (error) {
+        toast.error("데모 로그인 실패", { description: "잠시 후 다시 시도해주세요." })
+        return
+      }
+      window.location.href = "/"
+    } catch {
+      toast.error("오류가 발생했습니다.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,6 +125,28 @@ export default function LoginPage() {
               회원가입
             </Link>
           </p>
+          {DEMO_EMAIL && DEMO_PASSWORD && (
+            <>
+              <div className="flex items-center gap-2 w-full">
+                <div className="flex-1 h-px bg-border" />
+                <span className="text-xs text-muted-foreground">또는</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-8 text-sm"
+                disabled={isLoading}
+                onClick={handleDemoLogin}
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                🎮 데모로 체험하기
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                (회원가입 없이 바로 체험 가능)
+              </p>
+            </>
+          )}
         </CardFooter>
       </form>
     </Card>
