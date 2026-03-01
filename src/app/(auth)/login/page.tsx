@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -22,7 +22,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { Loader2, Users, Crown } from "lucide-react"
+import { Loader2, Users, Crown, ExternalLink } from "lucide-react"
 
 const DEMO_EMAIL = process.env.NEXT_PUBLIC_DEMO_EMAIL
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD
@@ -31,11 +31,33 @@ const DEMO_ADMIN_PASSWORD = process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD
 
 const isDemoEnabled = !!(DEMO_EMAIL && DEMO_PASSWORD)
 
+const APP_WIDTH = 360
+const APP_HEIGHT = 580
+
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [demoDialogOpen, setDemoDialogOpen] = useState(false)
+  // SSR 기본 true → 깜빡임 방지 (클라이언트에서 팝업 여부 감지 후 변경)
+  const [isPopup, setIsPopup] = useState(true)
+
+  useEffect(() => {
+    // opener 있거나 창 폭이 앱 크기에 가까우면 팝업 창으로 간주
+    const inPopup = !!window.opener || window.outerWidth <= APP_WIDTH + 60
+    setIsPopup(inPopup)
+  }, [])
+
+  const handleLaunch = () => {
+    const x = Math.round((screen.width - APP_WIDTH) / 2)
+    const y = Math.round((screen.height - APP_HEIGHT) / 2)
+    window.open(
+      window.location.href,
+      "sticky-app",
+      `width=${APP_WIDTH},height=${APP_HEIGHT},left=${x},top=${y},` +
+      `menubar=no,toolbar=no,location=no,status=no,resizable=no`
+    )
+  }
 
   const signInAs = async (loginEmail: string, loginPassword: string) => {
     setIsLoading(true)
@@ -101,6 +123,24 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // 런처 화면 (일반 탭에서 접속 시)
+  if (!isPopup) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="text-center space-y-2">
+          <p className="text-4xl">📌</p>
+          <h1 className="text-2xl font-bold text-white">Claude Sticky</h1>
+          <p className="text-sm text-slate-400">팀 협업 · 가상 사무실 · 게이미피케이션</p>
+        </div>
+        <Button size="lg" onClick={handleLaunch} className="gap-2 px-8">
+          <ExternalLink className="h-4 w-4" />
+          앱 실행하기
+        </Button>
+        <p className="text-xs text-slate-500">앱 크기(360×560)의 새 창으로 열립니다</p>
+      </div>
+    )
   }
 
   return (
