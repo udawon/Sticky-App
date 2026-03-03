@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "dev:electron": "cross-env ELECTRON_DEV=1 concurrently \"next dev --port 3000\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:electron": "cross-env ELECTRON_DEV=1 concurrently \"next dev --port 3333\" \"wait-on http://localhost:3333 && electron .\"",
     "build:next": "next build",
     "build:electron": "npm run build:next && electron-builder"
   },

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { useAuthStore } from "@/stores/auth-store"
 import { usePanelStore, type PanelType } from "@/stores/panel-store"
 import { createClient } from "@/lib/supabase/client"
+import type { RealtimeChannel } from "@supabase/supabase-js"
 
 // ─── 픽셀아트 설정 ───
 const T = 13
@@ -1328,14 +1329,21 @@ interface VirtualOfficeProps { onOnlineCountChange?: (n: number) => void }
 export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const staticRef = useRef<HTMLCanvasElement | null>(null)
+  const chRef = useRef<RealtimeChannel | null>(null)
+  const myPosRef = useRef({ col: 5, row: 8 })
   const { user } = useAuthStore()
   const { activePanel, openPanel } = usePanelStore()
   const [myPos, setMyPos] = useState({ col: 5, row: 8 })
   const [others, setOthers] = useState<AvatarPos[]>([])
+  const [isMobile, setIsMobile] = useState(false)
+  const moveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const nearby = useMemo(
     () => user ? (getNearby(myPos.col, myPos.row, user.role === "admin") ?? null) : null,
     [myPos, user]
   )
+
+  // myPos 변경 시 ref 동기화
+  useEffect(() => { myPosRef.current = myPos }, [myPos])
 
   useEffect(() => { staticRef.current = buildStatic(user?.role) }, [user?.role])
   useEffect(() => { onOnlineCountChange?.(others.length + 1) }, [others.length, onOnlineCountChange])
@@ -1344,32 +1352,51 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     if (!user?.team_id) return
     const supabase = createClient()
     const ch = supabase.channel(`office:${user.team_id}`)
+    chRef.current = ch
+
+    const buildPayload = () => ({
+      id: user.id, col: myPosRef.current.col, row: myPosRef.current.row,
+      nickname: user.nickname, avatarBody: user.avatar_body,
+      avatarHair: user.avatar_hair ?? "hair_default", avatarFace: user.avatar_face ?? "face_default",
+      avatarTop: user.avatar_top ?? "top_default", avatarBottom: user.avatar_bottom ?? "bottom_default",
+      avatarShoes: user.avatar_shoes ?? "shoes_default",
+    })
+
     ch.on("broadcast", { event: "position" }, ({ payload }) => {
       if (payload.id === user.id) return
       setOthers(prev => { const i = prev.findIndex(a => a.id === payload.id); if (i >= 0) { const u = [...prev]; u[i] = payload; return u }; return [...prev, payload] })
     }).on("broadcast", { event: "leave" }, ({ payload }) => {
       setOthers(prev => prev.filter(a => a.id !== payload.id))
-    }).subscribe()
-    ch.send({ type: "broadcast", event: "position", payload: {
-      id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body,
-      avatarHair: user.avatar_hair ?? "hair_default", avatarFace: user.avatar_face ?? "face_default",
-      avatarTop: user.avatar_top ?? "top_default", avatarBottom: user.avatar_bottom ?? "bottom_default",
-      avatarShoes: user.avatar_shoes ?? "shoes_default",
-    } })
-    return () => { ch.send({ type: "broadcast", event: "leave", payload: { id: user.id } }); supabase.removeChannel(ch) }
+    }).on("broadcast", { event: "join" }, ({ payload }) => {
+      // 새 사용자 접속 시 내 위치 재전송 → 늦게 접속한 사람도 기존 유저 확인 가능
+      if (payload.id === user.id) return
+      ch.send({ type: "broadcast", event: "position", payload: buildPayload() })
+    }).subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        // 구독 완료 후 join + 내 위치 broadcast
+        ch.send({ type: "broadcast", event: "join", payload: { id: user.id } })
+        ch.send({ type: "broadcast", event: "position", payload: buildPayload() })
+      }
+    })
+
+    return () => {
+      ch.send({ type: "broadcast", event: "leave", payload: { id: user.id } })
+      supabase.removeChannel(ch)
+      chRef.current = null
+    }
   }, [user])
 
   useEffect(() => {
     if (!user?.team_id) return
-    const supabase = createClient()
-    const ch = supabase.channel(`office:${user.team_id}`)
+    const ch = chRef.current
+    if (!ch) return
     ch.send({ type: "broadcast", event: "position", payload: {
       id: user.id, col: myPos.col, row: myPos.row, nickname: user.nickname, avatarBody: user.avatar_body,
       avatarHair: user.avatar_hair ?? "hair_default", avatarFace: user.avatar_face ?? "face_default",
       avatarTop: user.avatar_top ?? "top_default", avatarBottom: user.avatar_bottom ?? "bottom_default",
       avatarShoes: user.avatar_shoes ?? "shoes_default",
     } })
-  }, [myPos])
+  }, [myPos, user])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -1389,6 +1416,44 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [myPos, nearby, activePanel, openPanel])
+
+  // 모바일 감지
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // 모바일 이동 핸들러
+  const handleMove = useCallback((dir: 'up' | 'down' | 'left' | 'right') => {
+    if (activePanel) return
+    setMyPos(prev => {
+      let nc = prev.col, nr = prev.row
+      switch (dir) {
+        case 'up':    nr--; break
+        case 'down':  nr++; break
+        case 'left':  nc--; break
+        case 'right': nc++; break
+      }
+      if (nc >= 1 && nc < COLS - 1 && nr >= 1 && nr < ROWS - 1 && !isBlocked(nc, nr)) return { col: nc, row: nr }
+      return prev
+    })
+  }, [activePanel])
+
+  const startContinuousMove = useCallback((dir: 'up' | 'down' | 'left' | 'right') => {
+    handleMove(dir)
+    moveTimerRef.current = setInterval(() => handleMove(dir), 180)
+  }, [handleMove])
+
+  const stopContinuousMove = useCallback(() => {
+    if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null }
+  }, [])
+
+  // 캔버스 탭 → 상호작용
+  const handleCanvasClick = useCallback(() => {
+    if (nearby?.panelType) openPanel(nearby.panelType)
+  }, [nearby, openPanel])
 
   const render = useCallback(() => {
     const canvas = canvasRef.current
@@ -1481,13 +1546,19 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
       ctx.textAlign = "center"
       const tw = ctx.measureText(label).width + 50, hx = DW / 2 - tw / 2, hy = DH - 26
       ctx.fillStyle = "rgba(15,23,42,0.9)"; ctx.beginPath(); ctx.roundRect(hx, hy, tw, 22, 6); ctx.fill()
-      // SPACE 키 배지
-      ctx.fillStyle = "rgba(59,130,246,0.3)"; ctx.beginPath(); ctx.roundRect(hx + 4, hy + 3, 36, 16, 3); ctx.fill()
-      ctx.fillStyle = "#93c5fd"; ctx.font = "bold 8px monospace"; ctx.fillText("SPACE", hx + 22, hy + 14)
+      if (isMobile) {
+        // 탭 배지
+        ctx.fillStyle = "rgba(59,130,246,0.3)"; ctx.beginPath(); ctx.roundRect(hx + 4, hy + 3, 24, 16, 3); ctx.fill()
+        ctx.fillStyle = "#93c5fd"; ctx.font = "bold 8px monospace"; ctx.fillText("탭", hx + 16, hy + 14)
+      } else {
+        // SPACE 키 배지
+        ctx.fillStyle = "rgba(59,130,246,0.3)"; ctx.beginPath(); ctx.roundRect(hx + 4, hy + 3, 36, 16, 3); ctx.fill()
+        ctx.fillStyle = "#93c5fd"; ctx.font = "bold 8px monospace"; ctx.fillText("SPACE", hx + 22, hy + 14)
+      }
       ctx.fillStyle = "#fff"; ctx.font = "bold 10px 'Segoe UI', sans-serif"; ctx.fillText(label, hx + tw / 2 + 14, hy + 15)
     }
 
-  }, [myPos, others, nearby, user, activePanel])
+  }, [myPos, others, nearby, user, activePanel, isMobile])
 
   useEffect(() => {
     let animId: number
@@ -1498,7 +1569,14 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
 
   return (
     <div className="relative flex-1" style={{ backgroundColor: "#b4b8be" }}>
-      <canvas ref={canvasRef} width={DW} height={DH} className="block w-full" tabIndex={0} />
+      <canvas
+        ref={canvasRef}
+        width={DW}
+        height={DH}
+        className="block w-full"
+        tabIndex={0}
+        onClick={isMobile ? handleCanvasClick : undefined}
+      />
       {/* HUD 오버레이 */}
       {!activePanel && user && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center p-2">
@@ -1507,8 +1585,50 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
             <span className="h-2.5 w-px bg-white/30" />
             <span className="text-amber-300 font-semibold">{user.points}P</span>
             <span className="h-2.5 w-px bg-white/30" />
-            <span className="text-white/60">WASD 이동 · Space 상호작용</span>
+            <span className="text-white/60">
+              {isMobile ? "조이패드 이동 · 탭 상호작용" : "WASD 이동 · Space 상호작용"}
+            </span>
           </div>
+        </div>
+      )}
+      {/* 모바일 D-pad */}
+      {isMobile && !activePanel && (
+        <div
+          className="absolute bottom-10 right-3 select-none"
+          style={{ touchAction: "none", width: 112, height: 112 }}
+        >
+          {/* 위 */}
+          <button
+            style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)" }}
+            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
+            onPointerDown={() => startContinuousMove('up')}
+            onPointerUp={stopContinuousMove}
+            onPointerLeave={stopContinuousMove}
+          >▲</button>
+          {/* 아래 */}
+          <button
+            style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)" }}
+            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
+            onPointerDown={() => startContinuousMove('down')}
+            onPointerUp={stopContinuousMove}
+            onPointerLeave={stopContinuousMove}
+          >▼</button>
+          {/* 왼쪽 */}
+          <button
+            style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)" }}
+            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
+            onPointerDown={() => startContinuousMove('left')}
+            onPointerUp={stopContinuousMove}
+            onPointerLeave={stopContinuousMove}
+          >◀</button>
+          {/* 오른쪽 */}
+          <button
+            style={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)" }}
+            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
+            onPointerDown={() => startContinuousMove('right')}
+            onPointerUp={stopContinuousMove}
+            onPointerLeave={stopContinuousMove}
+          >▶</button>
         </div>
       )}
     </div>

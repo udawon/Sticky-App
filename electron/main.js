@@ -18,7 +18,7 @@ let tray = null;
 let nextServer = null;
 let trayIconNormal = null;  // 기본 트레이 아이콘 (NativeImage 캐시)
 let trayIconBadge = null;   // 알람 뱃지 트레이 아이콘 (NativeImage 캐시)
-const PORT = 3000;
+const PORT = 3333;
 
 // ─────────────────────────────────────────────
 // Next.js 서버 실행 (프로덕션 모드)
