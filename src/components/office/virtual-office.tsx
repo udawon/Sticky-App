@@ -1336,7 +1336,7 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
   const [myPos, setMyPos] = useState({ col: 5, row: 8 })
   const [others, setOthers] = useState<AvatarPos[]>([])
   const [isMobile, setIsMobile] = useState(false)
-  const moveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   const nearby = useMemo(
     () => user ? (getNearby(myPos.col, myPos.row, user.role === "admin") ?? null) : null,
     [myPos, user]
@@ -1441,19 +1441,33 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
     })
   }, [activePanel])
 
-  const startContinuousMove = useCallback((dir: 'up' | 'down' | 'left' | 'right') => {
-    handleMove(dir)
-    moveTimerRef.current = setInterval(() => handleMove(dir), 180)
-  }, [handleMove])
-
-  const stopContinuousMove = useCallback(() => {
-    if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null }
+  // 스와이프 시작 - 터치 좌표 기록
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const t = e.touches[0]
+    touchStartRef.current = { x: t.clientX, y: t.clientY }
   }, [])
 
-  // 캔버스 탭 → 상호작용
-  const handleCanvasClick = useCallback(() => {
-    if (nearby?.panelType) openPanel(nearby.panelType)
-  }, [nearby, openPanel])
+  // 스와이프 종료 - 방향 계산 후 이동 또는 상호작용
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - touchStartRef.current.x
+    const dy = t.clientY - touchStartRef.current.y
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    touchStartRef.current = null
+
+    if (dist < 10) {
+      // 탭 → 오브젝트 상호작용
+      if (nearby?.panelType) openPanel(nearby.panelType)
+      return
+    }
+
+    // 스와이프 → 이동
+    handleMove(Math.abs(dx) > Math.abs(dy)
+      ? (dx > 0 ? 'right' : 'left')
+      : (dy > 0 ? 'down' : 'up')
+    )
+  }, [nearby, openPanel, handleMove])
 
   const render = useCallback(() => {
     const canvas = canvasRef.current
@@ -1575,7 +1589,9 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
         height={DH}
         className="block w-full"
         tabIndex={0}
-        onClick={isMobile ? handleCanvasClick : undefined}
+        style={isMobile ? { touchAction: "none" } : undefined}
+        onTouchStart={isMobile ? handleTouchStart : undefined}
+        onTouchEnd={isMobile ? handleTouchEnd : undefined}
       />
       {/* HUD 오버레이 */}
       {!activePanel && user && (
@@ -1586,49 +1602,9 @@ export function VirtualOffice({ onOnlineCountChange }: VirtualOfficeProps) {
             <span className="text-amber-300 font-semibold">{user.points}P</span>
             <span className="h-2.5 w-px bg-white/30" />
             <span className="text-white/60">
-              {isMobile ? "조이패드 이동 · 탭 상호작용" : "WASD 이동 · Space 상호작용"}
+              {isMobile ? "스와이프 이동 · 탭 상호작용" : "WASD 이동 · Space 상호작용"}
             </span>
           </div>
-        </div>
-      )}
-      {/* 모바일 D-pad */}
-      {isMobile && !activePanel && (
-        <div
-          className="absolute bottom-10 right-3 select-none"
-          style={{ touchAction: "none", width: 112, height: 112 }}
-        >
-          {/* 위 */}
-          <button
-            style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)" }}
-            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
-            onPointerDown={() => startContinuousMove('up')}
-            onPointerUp={stopContinuousMove}
-            onPointerLeave={stopContinuousMove}
-          >▲</button>
-          {/* 아래 */}
-          <button
-            style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)" }}
-            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
-            onPointerDown={() => startContinuousMove('down')}
-            onPointerUp={stopContinuousMove}
-            onPointerLeave={stopContinuousMove}
-          >▼</button>
-          {/* 왼쪽 */}
-          <button
-            style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)" }}
-            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
-            onPointerDown={() => startContinuousMove('left')}
-            onPointerUp={stopContinuousMove}
-            onPointerLeave={stopContinuousMove}
-          >◀</button>
-          {/* 오른쪽 */}
-          <button
-            style={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)" }}
-            className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:bg-black/70 text-base"
-            onPointerDown={() => startContinuousMove('right')}
-            onPointerUp={stopContinuousMove}
-            onPointerLeave={stopContinuousMove}
-          >▶</button>
         </div>
       )}
     </div>
